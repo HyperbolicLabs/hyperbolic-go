@@ -11,6 +11,7 @@ What the SDK is generated from.
 `make generate` applies the overlay, checks the spec against `sdk.yaml`, and writes the following files.
 
 - A file per service, such as `rentals_gen.go`, with the service and the types only it uses. `shared_gen.go` has the types several services use and `client_gen.go` the `Client`. Types come from oapi-codegen and services from `internal/gen/templates`.
+- `hyperbolictest/internal/server/`, the test server's routes and parameter handling, kept internal so they stay out of its public API.
 - `operations_gen_test.go` and `testdata/responses/`, a test per operation and sample responses built from the spec. Each method must decode every sample without losing anything.
 
 Every generated file starts with the license header in `hack/boilerplate.go.txt` and is marked generated in `.gitattributes`, so GitHub collapses it in pull request diffs. CI fails when the committed files differ from what `make generate` writes.
@@ -19,6 +20,7 @@ Every generated file starts with the license header in `hack/boilerplate.go.txt`
 
 1. Add it under its service in `sdk.yaml` with `operation`, the operationId, and `id`, the Go name its types derive from. Set `idempotent` if the HTTP method's default is wrong for it. GET, PUT and DELETE default to true and POST to false. Set `paginate` if it returns pages.
 2. Run `make generate`. The generated test calls the new method with every sample response and checks its retry behavior, and `make test` runs it.
+3. If `hyperbolictest` should model it, implement its handler on the test server's `api` type. Otherwise it answers 501.
 
 ## Fixes for the published spec
 
