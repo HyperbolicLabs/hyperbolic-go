@@ -481,10 +481,11 @@ func TestRentalSSHKeys(t *testing.T) {
 		t.Fatalf("attach an unknown key: err %v, want not found", err)
 	}
 
-	// A key cannot be deleted while a live rental uses it.
+	// A key cannot be deleted while a live rental uses it, and the answer is
+	// the live API's 409.
 	deleteDefault := hyperbolic.DeleteSSHKeyParams{ID: defaultKey}
-	if _, err := c.SSHKeys.Delete(ctx, deleteDefault); !hyperbolic.HasCode(err, hyperbolic.CodeSSHPublicKeyInUse) {
-		t.Fatalf("delete a key in use: err %v, want %s", err, hyperbolic.CodeSSHPublicKeyInUse)
+	if _, err := c.SSHKeys.Delete(ctx, deleteDefault); hyperbolic.StatusCode(err) != http.StatusConflict || !hyperbolic.HasCode(err, "CONFLICT") {
+		t.Fatalf("delete a key in use: err %v, want 409 CONFLICT", err)
 	}
 	s.TerminateExternally(created.RentalID)
 	if _, err := c.SSHKeys.Delete(ctx, deleteDefault); err != nil {

@@ -44,8 +44,9 @@ const (
 	CodeNotFound                     = "NOT_FOUND"
 	// The SSH key codes are documented by the spec. Saving a key the account
 	// already has, with the same type and body, returns
-	// SSH_PUBLIC_KEY_ALREADY_EXISTS. Deleting a key that a live rental uses
-	// returns SSH_PUBLIC_KEY_IN_USE.
+	// SSH_PUBLIC_KEY_ALREADY_EXISTS. For deleting a key that a live rental
+	// uses, the spec documents SSH_PUBLIC_KEY_IN_USE, but the live API
+	// answers 409 with code CONFLICT, so check the status as well.
 	CodeSSHPublicKeyAlreadyExists = "SSH_PUBLIC_KEY_ALREADY_EXISTS"
 	CodeSSHPublicKeyInUse         = "SSH_PUBLIC_KEY_IN_USE"
 	CodeSSHPublicKeyNotFound      = "SSH_PUBLIC_KEY_NOT_FOUND"
