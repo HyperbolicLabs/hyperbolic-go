@@ -25,6 +25,17 @@ jobs:
       - run: go vet ./...
       - run: go test -race -count=1 -coverprofile=coverage.out ./...
 
+  generated:
+    name: Generated code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: stable
+      - name: Regenerate and compare with what is committed
+        run: make verify-generated
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +46,11 @@ jobs:
       - uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9 # v8.0.0
         with:
           version: v2.15.0 # keep in sync with GOLANGCI_LINT_VERSION in the Makefile
+      - name: Lint the generator
+        uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9 # v8.0.0
+        with:
+          version: v2.15.0 # keep in sync with GOLANGCI_LINT_VERSION in the Makefile
+          working-directory: internal/gen
 
   vuln:
     runs-on: ubuntu-latest

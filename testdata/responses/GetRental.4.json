@@ -1,0 +1,90 @@
+{
+  "rental": {
+    "attachedStorage": [
+      {
+        "costPerHourCents": 7.5,
+        "label": "sample",
+        "sizeInGb": 7,
+        "storageVolumeId": "sample",
+        "virtualIp": "sample"
+      }
+    ],
+    "connectionType": "ethernet",
+    "convertToOnDemandOnExpiry": null,
+    "createdAt": "2026-10-21T07:00:00Z",
+    "createdBy": {
+      "email": "sample",
+      "id": "sample",
+      "name": null,
+      "picture": null
+    },
+    "currentTerm": {
+      "costPerHour": 7.5,
+      "discountPercentage": 7.5,
+      "effectiveAt": "2026-10-21T07:00:00Z",
+      "originalCostPerHour": 7.5,
+      "reservationEndsAt": null,
+      "reservedUntil": null,
+      "termPeriodDays": 7,
+      "termType": "reserved"
+    },
+    "ethernetVariant": null,
+    "exposedPorts": [
+      7
+    ],
+    "gpuCount": 7,
+    "gpuFormFactor": "sxm6",
+    "gpuType": "h200",
+    "label": null,
+    "managedCluster": null,
+    "monitoringEnabled": true,
+    "name": null,
+    "networkInterfaces": [
+      {
+        "privateIp": "sample",
+        "publicIp": "sample"
+      }
+    ],
+    "nodes": [
+      {
+        "cpuCount": null,
+        "cpuModel": "sample",
+        "gpuCount": 7,
+        "ramGb": 7,
+        "storageGb": 7,
+        "vcpuCount": null
+      }
+    ],
+    "orgId": null,
+    "portMappings": [
+      {
+        "externalPort": 7,
+        "internalPort": 7
+      }
+    ],
+    "privateCluster": null,
+    "region": "sample",
+    "rentalId": "sample",
+    "rentalType": "bare-metal",
+    "sshEndpoints": [
+      {
+        "host": "sample",
+        "port": 7,
+        "user": "sample"
+      }
+    ],
+    "startedAt": null,
+    "status": "Pending",
+    "supportsAttachedStorage": true,
+    "supportsCustomPorts": true,
+    "supportsMultipleSshKeys": true,
+    "supportsPortForwarding": true,
+    "supportsSshKeyUpdates": true,
+    "terminatedAt": "2026-10-21T07:00:00Z",
+    "terminationReason": null,
+    "totalCost": 7.5,
+    "updatedAt": null,
+    "userId": "sample"
+  },
+  "state": "terminated"
+}

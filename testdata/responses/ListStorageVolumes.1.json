@@ -1,0 +1,21 @@
+[
+  {
+    "attachedRentalIds": [
+      "sample"
+    ],
+    "costPerHourCents": 7.5,
+    "createdAt": "2026-10-21T07:00:00Z",
+    "label": "sample",
+    "orgId": "sample",
+    "region": "sample",
+    "sizeInGb": 7,
+    "startedAt": "2026-10-21T07:00:00Z",
+    "status": "active",
+    "storageVolumeId": "sample",
+    "terminatedAt": "2026-10-21T07:00:00Z",
+    "terminationReason": "sample",
+    "updatedAt": "2026-10-21T07:00:00Z",
+    "userId": "sample",
+    "virtualIp": "sample"
+  }
+]

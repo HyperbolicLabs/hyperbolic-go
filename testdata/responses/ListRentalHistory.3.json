@@ -1,0 +1,110 @@
+{
+  "items": [
+    {
+      "attachedStorage": [
+        {
+          "costPerHourCents": 7.5,
+          "label": "sample",
+          "sizeInGb": 7,
+          "storageVolumeId": "sample",
+          "virtualIp": "sample"
+        }
+      ],
+      "connectionType": "ethernet",
+      "convertToOnDemandOnExpiry": true,
+      "createdAt": "2026-10-21T07:00:00Z",
+      "createdBy": {
+        "email": "sample",
+        "id": "sample",
+        "name": "sample",
+        "picture": "sample"
+      },
+      "currentTerm": {
+        "costPerHour": 7.5,
+        "discountPercentage": 7.5,
+        "effectiveAt": "2026-10-21T07:00:00Z",
+        "originalCostPerHour": 7.5,
+        "reservationEndsAt": "2026-10-21T07:00:00Z",
+        "reservedUntil": "2026-10-21T07:00:00Z",
+        "termPeriodDays": 7,
+        "termType": "reserved"
+      },
+      "ethernetVariant": "rocev2",
+      "exposedPorts": [
+        7
+      ],
+      "gpuCount": 7,
+      "gpuFormFactor": "sxm6",
+      "gpuType": "h200",
+      "label": "sample",
+      "managedCluster": {
+        "label": "sample",
+        "name": "sample"
+      },
+      "monitoringEnabled": true,
+      "name": "sample",
+      "networkInterfaces": [
+        {
+          "privateIp": "sample",
+          "publicIp": "sample"
+        }
+      ],
+      "nodes": [
+        {
+          "cpuCount": 7.5,
+          "cpuModel": "sample",
+          "gpuCount": 7,
+          "ramGb": 7,
+          "storageGb": 7,
+          "vcpuCount": 7.5
+        }
+      ],
+      "orgId": "sample",
+      "portMappings": [
+        {
+          "externalPort": 7,
+          "internalPort": 7
+        }
+      ],
+      "privateCluster": {
+        "gpuModel": "sample",
+        "handover": {},
+        "location": "sample",
+        "nodes": [
+          {
+            "hostname": "sample",
+            "privateIp": "sample",
+            "publicIp": "sample",
+            "role": "head"
+          }
+        ],
+        "sshPort": 7.5,
+        "sshUser": "sample"
+      },
+      "region": "sample",
+      "rentalId": "sample",
+      "rentalType": "bare-metal",
+      "sshEndpoints": [
+        {
+          "host": "sample",
+          "port": 7,
+          "user": "sample"
+        }
+      ],
+      "startedAt": "2026-10-21T07:00:00Z",
+      "status": "Pending",
+      "supportsAttachedStorage": true,
+      "supportsCustomPorts": true,
+      "supportsMultipleSshKeys": true,
+      "supportsPortForwarding": true,
+      "supportsSshKeyUpdates": true,
+      "terminatedAt": "2026-10-21T07:00:00Z",
+      "terminationReason": "sample",
+      "totalCost": 7.5,
+      "updatedAt": "2026-10-21T07:00:00Z",
+      "userId": "sample"
+    }
+  ],
+  "nextCursor": "sample",
+  "totalCount": 7
+}

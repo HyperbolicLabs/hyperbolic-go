@@ -1,0 +1,6 @@
+# Written by make generate. GitHub collapses these in pull request diffs;
+# review what they are generated from (openapi/, internal/gen/templates/).
+*_gen.go               linguist-generated=true
+*_gen_test.go          linguist-generated=true
+testdata/responses/**  linguist-generated=true
+go.sum                 linguist-generated=true

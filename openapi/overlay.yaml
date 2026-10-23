@@ -1,0 +1,254 @@
+# OpenAPI Overlay (https://spec.openapis.org/overlay/v1.0.0) applied to
+# openapi.json before generating the SDK. Each group fixes a problem in the
+# published spec, and README.md in this directory lists them for the API's
+# owners. Delete a group once the published spec carries the fix.
+# `make generate` fails on an action whose target no longer matches.
+overlay: 1.0.0
+info:
+  title: hyperbolic-go fixes to the Hyperbolic API spec
+  version: 1.0.0
+actions:
+  # Counts, sizes and ports are whole numbers, but the spec types them as
+  # number, which generates float32 fields.
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/request-reservation'].post.requestBody.content['application/json'].schema.properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.totalAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.nodes.items.properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.nodes.items.properties.ramGb"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.nodes.items.properties.storageGb"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.nodes.items.properties.vcpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.totalAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.nodes.items.properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.nodes.items.properties.ramGb"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.nodes.items.properties.storageGb"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.nodes.items.properties.cpuCount"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/reserve-options'].get.responses['200'].content['application/json'].schema.properties.options.items.properties.termPeriodDays"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/reserve-options'].get.responses['200'].content['application/json'].schema.properties.requestedOption.properties.termPeriodDays"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/storage-volume-options'].get.responses['200'].content['application/json'].schema.items.properties.maxSizeInGb"
+    update:
+      type: integer
+  - target: "$.components.schemas.Rental.properties.exposedPorts.items"
+    update:
+      type: integer
+  - target: "$.components.schemas.Rental.properties.currentTerm.oneOf[1].properties.termPeriodDays"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalNode.properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalNode.properties.ramGb"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalNode.properties.storageGb"
+    update:
+      type: integer
+  - target: "$.components.schemas.SshEndpoint.properties.port"
+    update:
+      type: integer
+  - target: "$.components.schemas.PortMapping.properties.externalPort"
+    update:
+      type: integer
+  - target: "$.components.schemas.PortMapping.properties.internalPort"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalWithStatus.properties.exposedPorts.items"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalWithStatus.properties.currentTerm.oneOf[1].properties.termPeriodDays"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalInstanceResources.properties.vcpuCount"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalInstanceResources.properties.ramGb"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalInstanceResources.properties.gpuCount"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalInstanceResources.properties.gpuMemoryGb"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalInstanceResources.properties.scratchDiskGb"
+    update:
+      type: integer
+  - target: "$.components.schemas.RentalInstanceResources.properties.scratchDiskCount"
+    update:
+      type: integer
+  - target: "$.components.schemas.HistoricalRental.properties.exposedPorts.items"
+    update:
+      type: integer
+  - target: "$.components.schemas.HistoricalRental.properties.currentTerm.oneOf[1].properties.termPeriodDays"
+    update:
+      type: integer
+  - target: "$.components.schemas.ReservationExtensionOption.properties.termPeriodDays"
+    update:
+      type: integer
+  - target: "$.components.schemas.ReservedConversionOption.properties.termPeriodDays"
+    update:
+      type: integer
+  # Rental ids are strings. The spec also accepts the deprecated numeric id,
+  # which generates an opaque union instead of a string field.
+  - target: "$.paths['/v2/on-demand/storage-volumes/attach'].post.requestBody.content['application/json'].schema.properties.rentalIds.items.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes/attach'].post.requestBody.content['application/json'].schema.properties.rentalIds.items"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/convert-to-reserved'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/convert-to-reserved'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/storage-volumes'].post.requestBody.content['application/json'].schema.properties.rentalIds.items.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes'].post.requestBody.content['application/json'].schema.properties.rentalIds.items"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/extend-reserved'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/extend-reserved'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals/reboot-instance'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/reboot-instance'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals/terminate'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/terminate'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals/update'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/update'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/storage-volumes/update'].post.requestBody.content['application/json'].schema.properties.rentalIds.items.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes/update'].post.requestBody.content['application/json'].schema.properties.rentalIds.items"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals/ssh-keys/attach'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/ssh-keys/attach'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals/ssh-keys/detach'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/ssh-keys/detach'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
+  # Storage volume ids are strings in every response; requests also accept
+  # an integer that no response returns.
+  - target: "$.paths['/v2/on-demand/storage-volumes/attach'].post.requestBody.content['application/json'].schema.properties.storageVolumeId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes/attach'].post.requestBody.content['application/json'].schema.properties.storageVolumeId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/storage-volumes/terminate'].post.requestBody.content['application/json'].schema.properties.storageVolumeId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes/terminate'].post.requestBody.content['application/json'].schema.properties.storageVolumeId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/storage-volumes/update'].post.requestBody.content['application/json'].schema.properties.storageVolumeId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes/update'].post.requestBody.content['application/json'].schema.properties.storageVolumeId"
+    update:
+      type: string
+      minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.storageVolume.oneOf[0].properties.id.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.storageVolume.oneOf[0].properties.id"
+    update:
+      type: string
+      minLength: 1
+  # Regions are closed enums, and in requests a union of two. Regions are
+  # added often, so the SDK takes and returns any string rather than needing
+  # a release for each new one.
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.region.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.region"
+    update:
+      type: string
+  - target: "$.paths['/v2/on-demand/storage-volumes'].post.requestBody.content['application/json'].schema.properties.region.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/storage-volumes'].post.requestBody.content['application/json'].schema.properties.region"
+    update:
+      type: string
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.region.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.region"
+    update:
+      type: string
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.region.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.region"
+    update:
+      type: string
+  - target: "$.components.schemas.CreatedStorageVolume.properties.region.anyOf"
+    remove: true
+  - target: "$.components.schemas.CreatedStorageVolume.properties.region"
+    update:
+      type: string
+  - target: "$.components.schemas.StorageVolume.properties.region.anyOf"
+    remove: true
+  - target: "$.components.schemas.StorageVolume.properties.region"
+    update:
+      type: string
+  - target: "$.paths['/v2/on-demand/rentals/active'].get.parameters[3].schema.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/history'].get.parameters[3].schema.enum"
+    remove: true
+  - target: "$.components.schemas.Rental.properties.region.enum"
+    remove: true
+  - target: "$.components.schemas.RentalWithStatus.properties.region.enum"
+    remove: true
+  - target: "$.components.schemas.HistoricalRental.properties.region.enum"
+    remove: true

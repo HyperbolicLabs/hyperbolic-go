@@ -1,0 +1,19 @@
+{
+  "completedPromos": [
+    "sample"
+  ],
+  "createdAt": "2026-10-21T07:00:00Z",
+  "email": "sample",
+  "emailVerified": null,
+  "hasPurchasedCredits": true,
+  "id": "sample",
+  "isActive": null,
+  "name": null,
+  "onboardedAt": null,
+  "onboardedFor": null,
+  "picture": null,
+  "provider": null,
+  "referralCode": null,
+  "reservedRentalLimit": 7,
+  "role": "user"
+}

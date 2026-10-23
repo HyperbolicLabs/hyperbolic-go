@@ -1,0 +1,102 @@
+{
+  "attachedStorage": [
+    {
+      "costPerHourCents": 7.5,
+      "label": "sample",
+      "sizeInGb": 7,
+      "storageVolumeId": "sample",
+      "virtualIp": "sample"
+    }
+  ],
+  "connectionType": "infiniband",
+  "convertToOnDemandOnExpiry": true,
+  "createdAt": "2026-10-21T07:00:00Z",
+  "createdBy": {
+    "email": "sample",
+    "id": "sample",
+    "name": "sample",
+    "picture": "sample"
+  },
+  "currentTerm": {
+    "costPerHour": 7.5,
+    "discountPercentage": null,
+    "effectiveAt": "2026-10-21T07:00:00Z",
+    "originalCostPerHour": null,
+    "reservationEndsAt": null,
+    "reservedUntil": null,
+    "termPeriodDays": null,
+    "termType": "private-cloud"
+  },
+  "ethernetVariant": "normal",
+  "exposedPorts": [
+    7
+  ],
+  "gpuCount": 7,
+  "gpuFormFactor": "pcie",
+  "gpuType": "b200",
+  "label": "sample",
+  "managedCluster": {
+    "label": "sample",
+    "name": "sample"
+  },
+  "monitoringEnabled": true,
+  "name": "sample",
+  "networkInterfaces": [
+    {
+      "privateIp": "sample",
+      "publicIp": "sample"
+    }
+  ],
+  "nodes": [
+    {
+      "cpuCount": 7.5,
+      "cpuModel": "sample",
+      "gpuCount": 7,
+      "ramGb": 7,
+      "storageGb": 7,
+      "vcpuCount": 7.5
+    }
+  ],
+  "orgId": "sample",
+  "portMappings": [
+    {
+      "externalPort": 7,
+      "internalPort": 7
+    }
+  ],
+  "privateCluster": {
+    "gpuModel": "sample",
+    "handover": {},
+    "location": "sample",
+    "nodes": [
+      {
+        "hostname": "sample",
+        "privateIp": "sample",
+        "publicIp": "sample",
+        "role": "compute"
+      }
+    ],
+    "sshPort": 7.5,
+    "sshUser": "sample"
+  },
+  "region": "sample",
+  "rentalId": "sample",
+  "rentalType": "virtual-machine",
+  "sshEndpoints": [
+    {
+      "host": "sample",
+      "port": 7,
+      "user": "sample"
+    }
+  ],
+  "startedAt": "2026-10-21T07:00:00Z",
+  "supportsAttachedStorage": true,
+  "supportsCustomPorts": true,
+  "supportsMultipleSshKeys": true,
+  "supportsPortForwarding": true,
+  "supportsSshKeyUpdates": true,
+  "terminatedAt": "2026-10-21T07:00:00Z",
+  "terminationReason": "sample",
+  "updatedAt": "2026-10-21T07:00:00Z",
+  "userId": "sample"
+}

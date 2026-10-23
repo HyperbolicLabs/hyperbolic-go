@@ -1,0 +1,217 @@
+# The Go SDK's surface: which API operations it exposes, and as what.
+#
+# The spec (openapi.json, with overlay.yaml applied) defines the wire format,
+# and this file names things for Go. `make generate` fails on an operation listed
+# here that the spec lacks or deprecates, and on a current operation listed
+# nowhere, so a new endpoint gets a deliberate name before it ships.
+#
+# Per method:
+#   operation   operationId in the spec.
+#   id          Go name the method's types derive from: <id>Params for its
+#               query or body parameters, and <id>Response for an inline
+#               response schema unless `response` names it.
+#   response    Go name for an inline response schema (for arrays, the item).
+#   idempotent  Whether the call is safe to repeat. Idempotent calls are
+#               retried on transient failures. The rest are retried only when
+#               the server provably did not process them, and an ambiguous
+#               failure is returned as ErrOutcomeUnknown. Defaults to true for
+#               GET, PUT and DELETE and false for POST.
+#   paginate    page:   page/pageSize parameters and a totalPages field.
+#               cursor: a cursor parameter and a nextCursor field.
+#               Adds an <name>All method returning an iterator over items.
+#   nullIsNotFound  The API answers 200 with a null body when nothing
+#               matches, and the method returns an error matching ErrNotFound.
+
+# Each service's doc is a verb phrase, and its Go docs read "<Service> <doc>".
+services:
+  Rentals:
+    doc: manages on-demand and reserved GPU rentals.
+    methods:
+      Options:
+        operation: ondemand-getRentalOptions
+        id: ListRentalOptions
+        response: RentalOption
+      Create:
+        operation: ondemand-createRental
+        id: CreateRental
+      Get:
+        operation: ondemand-getRental
+        id: GetRental
+        response: RentalLookup
+        nullIsNotFound: true
+      ListActive:
+        operation: ondemand-listActiveRentals
+        id: ListActiveRentals
+        paginate: page
+      ListHistory:
+        operation: ondemand-listRentalHistory
+        id: ListRentalHistory
+        paginate: cursor
+      HasHistory:
+        operation: ondemand-hasRentalHistory
+        id: HasRentalHistory
+      ActiveSummary:
+        operation: ondemand-getActiveRentalSummary
+        id: GetActiveRentalSummary
+      Update:
+        operation: ondemand-updateRental
+        id: UpdateRental
+        idempotent: true
+      Terminate:
+        operation: ondemand-terminateRental
+        id: TerminateRental
+        # Terminating a rental that is already gone fails cleanly, so a
+        # repeat is harmless.
+        idempotent: true
+      RebootInstance:
+        operation: ondemand-rebootRentalInstance
+        id: RebootRentalInstance
+      AttachSSHKey:
+        operation: ondemand-attachSshKeyToRental
+        id: AttachSSHKey
+        idempotent: true
+      DetachSSHKey:
+        operation: ondemand-detachSshKeyFromRental
+        id: DetachSSHKey
+        idempotent: true
+      ReserveOptions:
+        operation: ondemand-getReserveOptions
+        id: ListReserveOptions
+        response: ReserveOptions
+      RequestReservation:
+        operation: ondemand-requestReservation
+        id: RequestReservation
+        response: ReservationRequest
+      ConversionQuote:
+        operation: ondemand-getReservedConversionQuote
+        id: GetReservedConversionQuote
+      ConvertToReserved:
+        operation: ondemand-convertRentalToReserved
+        id: ConvertRentalToReserved
+      ExtensionQuote:
+        operation: ondemand-getReservationExtensionQuote
+        id: GetReservationExtensionQuote
+      ExtendReserved:
+        operation: ondemand-extendReservedRental
+        id: ExtendReservedRental
+
+  StorageVolumes:
+    doc: manages network storage volumes and their attachments.
+    methods:
+      Options:
+        operation: ondemand-getStorageVolumeOptions
+        id: ListStorageVolumeOptions
+        response: StorageVolumeOption
+      List:
+        operation: ondemand-getStorageVolumes
+        id: ListStorageVolumes
+      Create:
+        operation: ondemand-createStorageVolume
+        id: CreateStorageVolume
+      Update:
+        operation: ondemand-updateStorageVolume
+        id: UpdateStorageVolume
+        idempotent: true
+      Attach:
+        operation: ondemand-attachStorageVolume
+        id: AttachStorageVolume
+        idempotent: true
+      Terminate:
+        operation: ondemand-terminateStorageVolume
+        id: TerminateStorageVolume
+        idempotent: true
+
+  SSHKeys:
+    doc: manages the SSH public keys saved on the account.
+    methods:
+      List:
+        operation: sshKeys-list
+        id: ListSSHKeys
+      ListForRental:
+        operation: sshKeys-listForRental
+        id: ListRentalSSHKeys
+      Create:
+        operation: sshKeys-create
+        id: CreateSSHKey
+      Update:
+        operation: sshKeys-update
+        id: UpdateSSHKey
+        idempotent: true
+      Delete:
+        operation: sshKeys-delete
+        id: DeleteSSHKey
+        idempotent: true
+
+  Balances:
+    doc: reads the account's credit balance.
+    methods:
+      Get:
+        operation: customer-getBalance
+        id: GetBalance
+
+  APIKeys:
+    doc: lists the account's API keys.
+    methods:
+      List:
+        operation: apiKey-list
+        id: ListAPIKeys
+
+  Users:
+    doc: reads and updates the signed-in user.
+    methods:
+      Me:
+        operation: user-getCurrent
+        id: GetCurrentUser
+      UpdateMe:
+        operation: user-updateCurrentUser
+        id: UpdateCurrentUser
+      VerifyPhoneNumber:
+        operation: user-verifyPhoneNumber
+        id: VerifyPhoneNumber
+        # Its effect is not documented, so it is never retried.
+        idempotent: false
+      DeleteMe:
+        operation: user-deleteCurrentUser
+        id: DeleteCurrentUser
+
+# Named types for schemas the spec repeats inline, so each has one Go type.
+#
+# enums: one Go string type, with a constant per value, for the inline enums
+# on `property`: those whose values are among `values`, or, without
+# `values`, all of them (which must then share one value set).
+# unions: a oneOf hoisted from `property` (or the method response `schema`),
+# with its variants named in order and a discriminator on the property that
+# tells them apart, which the spec does not declare yet.
+enums:
+  GPUType:
+    property: gpuType
+  GPUFormFactor:
+    property: gpuFormFactor
+  ConnectionType:
+    property: connectionType
+  EthernetVariant:
+    property: ethernetVariant
+  RentalType:
+    property: rentalType
+  TermType:
+    property: termType
+    values: [on-demand, reserved, private-cloud]
+  RentalStatus:
+    property: status
+    values: [Failed, Pending, Rebooting, Running, Terminated, Terminating, Unknown]
+  StorageVolumeStatus:
+    property: status
+    values: [active, inactive, unknown]
+
+unions:
+  RentalTerm:
+    property: currentTerm
+    discriminator: termType
+    variants: [OnDemandTerm, ReservedTerm, PrivateCloudTerm]
+  RentalOption:
+    schema: RentalOption
+    discriminator: machineType
+    variants: [VirtualMachineOption, BareMetalOption]
+  StorageVolumeChoice:
+    property: storageVolume
+    variants: [ExistingStorageVolume, NewStorageVolume]
