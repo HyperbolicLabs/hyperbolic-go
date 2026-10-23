@@ -4,9 +4,15 @@ GOVULNCHECK_VERSION ?= v1.9.0
 
 # The published spec the SDK is generated from.
 SPEC_URL ?= https://api.hyperbolic.ai/v2/openapi.json
+# The git ref spec-diff compares openapi/openapi.json against.
+BASE ?= origin/main
 
 LOCALBIN ?= $(CURDIR)/bin
 GOLANGCI_LINT = $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
+
+# The pinned command-line tools live in their own module (internal/tools), so
+# their dependencies never reach the SDK's go.mod.
+TOOL = go tool -modfile=$(CURDIR)/internal/tools/go.mod
 
 .DEFAULT_GOAL := help
 
@@ -57,6 +63,30 @@ verify-generated: generate ## Fail if the committed generated files are stale.
 .PHONY: spec-sync
 spec-sync: ## Pull the published spec into openapi/openapi.json and regenerate.
 	go -C internal/gen run . -root $(CURDIR) -sync $(SPEC_URL)
+
+.PHONY: spec-diff
+spec-diff: ## List how the spec changed since BASE, and fail on changes that break API clients.
+	@mkdir -p $(LOCALBIN)
+	@if ! git cat-file -e $(BASE):openapi/openapi.json 2>/dev/null; then \
+		echo "No spec at $(BASE); nothing to compare."; \
+	else \
+		git show $(BASE):openapi/openapi.json > $(LOCALBIN)/openapi.base.json && \
+		$(TOOL) oasdiff changelog $(LOCALBIN)/openapi.base.json $(CURDIR)/openapi/openapi.json && \
+		$(TOOL) oasdiff breaking $(LOCALBIN)/openapi.base.json $(CURDIR)/openapi/openapi.json --fail-on ERR; \
+	fi
+
+##@ Release
+
+# API_BASE is the release to compare with, the latest by default. Set it to
+# none before the first release.
+.PHONY: api-check
+api-check: ## List how the exported Go API changed since the last release (gorelease).
+	$(TOOL) gorelease $(if $(API_BASE),-base=$(API_BASE))
+
+# The Release workflow releases this version. See RELEASE.md.
+.PHONY: release-version
+release-version: ## Print the next release's version as gorelease suggests it. Set VERSION to check your own.
+	@hack/release-version.sh $(VERSION)
 
 # Installs golangci-lint at the pinned version, named by version so a bump
 # installs the new one instead of reusing a stale binary.

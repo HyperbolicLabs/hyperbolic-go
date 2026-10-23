@@ -36,6 +36,56 @@ jobs:
       - name: Regenerate and compare with what is committed
         run: make verify-generated
 
+  api-changes:
+    name: API changes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: stable
+      # Lists what the spec change does to API clients, and fails on a
+      # breaking change unless the PR is labeled to accept one.
+      - name: Compare the spec with the base branch
+        run: make spec-diff BASE=origin/${{ github.base_ref }}
+        continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'breaking-api-change') }}
+
+  go-api-changes:
+    name: Go API changes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: stable
+      # Lists every change to the exported Go API since the last release, and
+      # fails on an incompatible one unless the PR is labeled to accept it.
+      # gorelease only reports incompatible changes (below v1 it accepts any
+      # version), so the failure is this step's.
+      - name: Compare the Go API with the last release
+        continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'breaking-api-change') }}
+        env:
+          GOPRIVATE: github.com/HyperbolicLabs/*
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+          if [ -z "$(git tag --list 'v*')" ]; then
+            echo "No release yet, so nothing to compare."
+            exit 0
+          fi
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/HyperbolicLabs/hyperbolic-go".insteadOf "https://github.com/HyperbolicLabs/hyperbolic-go"
+          make api-check | tee gorelease.txt
+          if grep -q '^## incompatible changes' gorelease.txt; then
+            echo "::error::This change breaks the exported Go API. If that is intended, label the pull request breaking-api-change and say in its description what users must change."
+            exit 1
+          fi
+
   lint:
     runs-on: ubuntu-latest
     steps:

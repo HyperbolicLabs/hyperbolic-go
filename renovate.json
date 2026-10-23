@@ -12,6 +12,10 @@
       "description": "A generator update can change the generated code. CI's generated-code check reports it, and make generate updates it.",
       "matchFileNames": ["internal/gen/go.mod"],
       "groupName": "generator"
+    },
+    {
+      "matchFileNames": ["internal/tools/go.mod"],
+      "groupName": "tools"
     }
   ],
   "customManagers": [

@@ -9,5 +9,5 @@
 ## Checklist
 
 - [ ] Tests cover the change, including failure modes
-- [ ] The title is a Conventional Commit written for the release notes, with `!` for a breaking change
+- [ ] The title is a Conventional Commit written for the release notes, with `!` and the `breaking-api-change` label for a breaking change
 - [ ] Docs are updated if behavior changed
