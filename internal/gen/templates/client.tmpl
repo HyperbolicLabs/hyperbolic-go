@@ -1,0 +1,19 @@
+// Client is a Hyperbolic API client. Create one with [NewClient]. It is safe
+// for concurrent use. Each field groups related API operations.
+type Client struct {
+	t *transport
+{{- range .Services}}
+
+{{comment "\t" (printf "%s %s" .Name .Doc)}}
+	{{.Name}} *{{.Name}}Service
+{{- end}}
+}
+
+func newClient(t *transport) *Client {
+	return &Client{
+		t: t,
+{{- range .Services}}
+		{{.Name}}: &{{.Name}}Service{t: t},
+{{- end}}
+	}
+}

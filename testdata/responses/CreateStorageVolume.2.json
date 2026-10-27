@@ -1,0 +1,11 @@
+{
+  "attachedRentalIds": [
+    "sample"
+  ],
+  "label": "sample",
+  "message": "sample",
+  "region": "sample",
+  "sizeInGb": 7,
+  "status": "inactive",
+  "storageVolumeId": "sample"
+}

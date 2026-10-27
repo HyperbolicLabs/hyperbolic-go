@@ -7,6 +7,13 @@
   ],
   "postUpdateOptions": ["gomodTidy"],
   "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "A generator update can change the generated code. CI's generated-code check reports it, and make generate updates it.",
+      "matchFileNames": ["internal/gen/go.mod"],
+      "groupName": "generator"
+    }
+  ],
   "customManagers": [
     {
       "description": "Tool versions pinned in the Makefile and the CI workflow.",

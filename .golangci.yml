@@ -32,6 +32,13 @@ linters:
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
         limitations under the License.
+  exclusions:
+    rules:
+      # The generator reads the spec its flags name and writes the
+      # repository's source files, which are meant to be world-readable.
+      - path: internal/gen/
+        linters: [gosec]
+        text: "G301|G304|G306|G703"
 
 formatters:
   enable:

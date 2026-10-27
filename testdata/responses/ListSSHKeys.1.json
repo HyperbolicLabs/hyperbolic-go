@@ -1,0 +1,15 @@
+[
+  {
+    "createdAt": "2026-10-21T07:00:00Z",
+    "createdBy": {
+      "email": "sample",
+      "name": "sample"
+    },
+    "id": 7,
+    "liveRentalCount": 7,
+    "name": "sample",
+    "orgId": "sample",
+    "publicKey": "sample",
+    "userId": "sample"
+  }
+]

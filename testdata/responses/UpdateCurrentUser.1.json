@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "user": {
+    "createdAt": "2026-10-21T07:00:00Z",
+    "email": "sample",
+    "emailVerified": true,
+    "id": "sample",
+    "isActive": true,
+    "name": "sample",
+    "onboardedAt": "2026-10-21T07:00:00Z",
+    "onboardedFor": "sample",
+    "picture": "sample",
+    "provider": "sample",
+    "referralCode": "sample"
+  }
+}

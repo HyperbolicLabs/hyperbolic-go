@@ -1,0 +1,16 @@
+[
+  {
+    "createdAt": "2026-10-21T07:00:00Z",
+    "last4": "sample",
+    "orgId": "sample",
+    "organizationMember": {
+      "email": "sample",
+      "fullName": "sample",
+      "imageUrl": "sample",
+      "role": "org:member"
+    },
+    "publicId": "sample",
+    "revokedAt": "2026-10-21T07:00:00Z",
+    "userId": "sample"
+  }
+]

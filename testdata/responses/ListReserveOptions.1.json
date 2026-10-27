@@ -1,0 +1,12 @@
+{
+  "options": [
+    {
+      "discountPercentage": 7.5,
+      "termPeriodDays": 7
+    }
+  ],
+  "requestedOption": {
+    "discountPercentage": 7.5,
+    "termPeriodDays": 7
+  }
+}

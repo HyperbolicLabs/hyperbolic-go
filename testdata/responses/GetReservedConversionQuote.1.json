@@ -1,0 +1,11 @@
+{
+  "costPerHourCents": 7.5,
+  "estimatedUsageTailCents": 7.5,
+  "options": [
+    {
+      "discountPercentage": 7.5,
+      "termPeriodDays": 7,
+      "totalPriceCents": 7.5
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "connectionType": "infiniband",
+    "costPerHourCents": 7.5,
+    "enabled": true,
+    "ethernetVariant": "normal",
+    "gpuCount": 7,
+    "gpuFormFactor": "pcie",
+    "gpuType": "b200",
+    "machineType": "virtual-machine",
+    "nodes": [
+      {
+        "cpuModel": "sample",
+        "gpuCount": 7,
+        "ramGb": 7,
+        "storageGb": 7,
+        "vcpuCount": 7
+      }
+    ],
+    "region": "sample",
+    "supportsCustomPorts": true,
+    "supportsMultipleSshKeys": true,
+    "supportsSshKeyUpdates": true,
+    "totalAvailable": 7
+  }
+]

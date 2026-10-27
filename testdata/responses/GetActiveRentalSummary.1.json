@@ -1,0 +1,18 @@
+{
+  "byTermType": {
+    "on-demand": {
+      "costPerHourCents": 7,
+      "count": 7
+    },
+    "private-cloud": {
+      "costPerHourCents": 7,
+      "count": 7
+    },
+    "reserved": {
+      "costPerHourCents": 7,
+      "count": 7
+    }
+  },
+  "costPerHourCents": 7,
+  "count": 7
+}
