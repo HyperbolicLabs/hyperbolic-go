@@ -735,9 +735,9 @@ func (a *api) UpdateSSHKey(w http.ResponseWriter, r *http.Request) {
 	writeKeyNotFound(w)
 }
 
-// DeleteSSHKey removes a saved key, and refuses while a live rental uses it,
-// as the spec documents. The status codes of its errors were not observed
-// against the live API.
+// DeleteSSHKey removes a saved key, and refuses while a live rental uses it
+// with 409 CONFLICT and the live API's message. The spec documents
+// SSH_PUBLIC_KEY_IN_USE instead.
 func (a *api) DeleteSSHKey(w http.ResponseWriter, r *http.Request) {
 	if !a.authorized(w, r) {
 		return
@@ -756,8 +756,8 @@ func (a *api) DeleteSSHKey(w http.ResponseWriter, r *http.Request) {
 	}
 	deleted := a.s.keys[i]
 	if n := a.s.liveRentalCountLocked(deleted.ID); n > 0 {
-		writeError(w, http.StatusBadRequest, hyperbolic.CodeSSHPublicKeyInUse,
-			fmt.Sprintf("the SSH public key is attached to %d live rental(s)", n))
+		writeError(w, http.StatusConflict, "CONFLICT",
+			"SSH public key is still attached to a live instance; it can be deleted once they are terminated")
 		return
 	}
 	a.s.keys = slices.Delete(a.s.keys, i, i+1)
@@ -790,6 +790,10 @@ func (a *api) ListRentalSSHKeys(w http.ResponseWriter, r *http.Request, params h
 	writeJSON(w, http.StatusOK, out)
 }
 
+// AttachSSHKey authorizes a saved key on an active rental. The live API
+// refuses on some rentals with 400 "SSH keys cannot be changed on this
+// rental", and the spec doesn't say which. The fake always allows it, so
+// test that answer with InjectFault.
 func (a *api) AttachSSHKey(w http.ResponseWriter, r *http.Request) {
 	a.changeRentalKeys(w, r, func(ids []int, id int) []int {
 		if slices.Contains(ids, id) {
