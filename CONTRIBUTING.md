@@ -20,7 +20,7 @@ Tool versions are pinned. `make lint` installs golangci-lint into `./bin`.
 
 Every Go file starts with the license header in `hack/boilerplate.go.txt`. The `goheader` linter checks it and the generator writes it.
 
-Tests never call the real Hyperbolic API. Serve the responses a test needs from an `httptest.Server`.
+Tests never call the real Hyperbolic API. Use `hyperbolictest`, the in-memory API server, which can also inject failures.
 
 ## Generated code
 
@@ -37,6 +37,7 @@ Files ending in `_gen.go` or `_gen_test.go`, and `testdata/responses/`, are writ
 | Path | Contents |
 |---|---|
 | `/` | The SDK, package `hyperbolic`. `<service>_gen.go` holds a service and the types only it uses, `shared_gen.go` the shared types, `client_gen.go` the `Client`. Hand-written: `client.go`, `errors.go`, `retry.go`, `pagination.go`, `version.go`. |
+| `hyperbolictest/` | The API server for tests. Its generated routes are in `internal/server`, outside its public API. |
 | `openapi/` | The pinned spec, the overlay and `sdk.yaml`. |
 | `internal/gen/` | The generator and its templates, a separate module. |
 | `testdata/responses/` | Sample responses built from the spec. |

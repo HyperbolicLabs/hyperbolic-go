@@ -204,6 +204,23 @@ for r, err := range client.Rentals.ListActiveAll(ctx, hyperbolic.ListActiveRenta
 - Unions such as a rental's `CurrentTerm` have `Discriminator()`, `ValueByDiscriminator()` and an `As...` method per variant, such as `AsOnDemandTerm`.
 - Enums are typed strings with a constant per known value, such as `RentalStatusRunning`. A value the SDK does not know yet still decodes, and `Valid()` reports whether it is known.
 
+## Testing your code
+
+`hyperbolictest` is an in-memory implementation of the API, generated from the same specification as the client. Use it instead of the real API in tests. It can inject the failures that matter.
+
+```go
+srv := hyperbolictest.NewServer(t)
+client := srv.Client(t)
+
+// Make the next create fail with a 502 after the rental was created.
+srv.InjectFault(hyperbolictest.Fault{
+	Method: http.MethodPost, Path: hyperbolictest.PathRentals,
+	Status: http.StatusBadGateway, AfterCommit: true,
+})
+```
+
+It also simulates status changes with `SetRentalStatus`, rentals ended by the platform with `TerminateExternally` and low balances with `SetBalance`. It starts with one saved SSH key, and `AddSSHKey` and `RentalSSHKeyIDs` set up and check the keys a rental gets. It counts requests, so a test can assert that a create was sent exactly once. Operations it does not model answer 501. `NewServer` takes a `testing.TB`, so Ginkgo suites pass `GinkgoTB()`.
+
 ## Documentation
 
 - [Package reference](https://pkg.go.dev/github.com/HyperbolicLabs/hyperbolic-go): every type and method, with runnable examples

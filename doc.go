@@ -69,4 +69,9 @@ limitations under the License.
 // github.com/oapi-codegen/nullable. Unions have a Discriminator method and an
 // As method per variant. Enums are typed strings, and a value the SDK does not
 // know yet still decodes.
+//
+// # Testing
+//
+// Package hyperbolictest is an in-memory fake of the API with fault
+// injection, for testing code that uses this package.
 package hyperbolic

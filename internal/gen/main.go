@@ -15,12 +15,13 @@ limitations under the License.
 */
 
 // Command gen generates the hyperbolic package from the Hyperbolic API's
-// OpenAPI spec: its models and services.
+// OpenAPI spec: its models and services, and the server interface the
+// hyperbolictest fake implements.
 //
 // The spec (openapi/openapi.json) with openapi/overlay.yaml applied is the
 // wire format, and openapi/sdk.yaml names each operation for Go. Models come
-// from oapi-codegen. Services come from this module's templates. Run it with
-// `make generate` from the repository root.
+// from oapi-codegen. Services and the test server's stubs come from this
+// module's templates. Run it with `make generate` from the repository root.
 //
 // gen lives in its own module so that oapi-codegen is never a dependency of
 // the SDK itself.
@@ -53,6 +54,8 @@ import (
 
 //go:embed templates/*.tmpl
 var templates embed.FS
+
+const modulePath = "github.com/HyperbolicLabs/hyperbolic-go"
 
 // initialisms beyond oapi-codegen's defaults, so gpuType becomes GPUType.
 var initialisms = []string{"GPU", "CPU", "SSH", "RAM", "VM", "CUDA", "SXM", "PCIE", "NVLINK"}
@@ -143,7 +146,36 @@ func run(root string) error {
 		return err
 	}
 
+	// The fake's routes and parameter handling, in package server under
+	// hyperbolictest/internal, so they stay out of the fake's public API.
+	spec, err = loadSpec(root, conf)
+	if err != nil {
+		return err
+	}
+	server, err := codegen.Generate(spec, codegen.Configuration{
+		PackageName:   "server",
+		Generate:      codegen.GenerateOptions{StdHTTPServer: true},
+		Compatibility: compatibility,
+		OutputOptions: outputOptions(conf, spec, codegen.OutputOptions{}),
+	})
+	if err != nil {
+		return fmt.Errorf("generate server: %w", err)
+	}
+	if server, err = qualify(server, view); err != nil {
+		return err
+	}
+	body, err = render("unimplemented.tmpl", view)
+	if err != nil {
+		return err
+	}
+	stubs, err := format("unimplemented_gen.go", body)
+	if err != nil {
+		return err
+	}
+
 	files["operations_gen_test.go"] = operationTests
+	files["hyperbolictest/internal/server/server_gen.go"] = server
+	files["hyperbolictest/internal/server/unimplemented_gen.go"] = stubs
 
 	boilerplate, err := os.ReadFile(filepath.Join(root, "hack", "boilerplate.go.txt"))
 	if err != nil {
@@ -206,6 +238,29 @@ func snake(name string) string {
 // for its own client. The services take <id>Params directly, so the aliases
 // would only add a second name for every request type.
 var requestBodyAlias = regexp.MustCompile(`(?m)^// \w+JSONRequestBody defines body for \w+ for application/json ContentType\.\ntype \w+JSONRequestBody = \w+\n\n?`)
+
+// qualify prefixes the SDK types the generated server names, its query
+// parameter types, with the package name: oapi-codegen writes them as if
+// models and server shared a package.
+func qualify(src string, v *view) (string, error) {
+	for _, s := range v.Services {
+		for _, m := range s.Methods {
+			if len(m.Query) == 0 {
+				continue
+			}
+			re := regexp.MustCompile(`([^.\w])` + m.Params + `\b`)
+			src = re.ReplaceAllString(src, "${1}hyperbolic."+m.Params)
+		}
+	}
+	// oapi-codegen drops the SDK import as unused before the names above
+	// are qualified, so add it back.
+	src = strings.Replace(src, "import (\n", "import (\n\thyperbolic \""+modulePath+"\"\n", 1)
+	out, err := imports.Process("server_gen.go", []byte(src), nil)
+	if err != nil {
+		return "", fmt.Errorf("format server: %w", err)
+	}
+	return string(out), nil
+}
 
 // syncSpec replaces openapi/openapi.json with the spec at src, indented two
 // spaces with its keys in their published order, so a change to the spec
