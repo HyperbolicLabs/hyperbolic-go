@@ -23,9 +23,10 @@ limitations under the License.
 // OpenAPI spec as the client, so they cannot drift from it. It models the
 // rental lifecycle (rental options, create, get, list, reboot, terminate),
 // saved SSH keys (save, list, rename, delete, and attach to or detach from a
-// rental) and the balance. Other operations answer 501 Not Implemented. Its
-// behavior follows what was observed against the live API. When the two
-// disagree, the live API wins and this package should be fixed.
+// rental), the balance and the active rental summary. Other operations answer
+// 501 Not Implemented. Its behavior follows what was observed against the live
+// API. When the two disagree, the live API wins and this package should be
+// fixed.
 //
 // A typical test injects a failure and checks what the caller does with it.
 // Here a create fails after the server has already created the rental:
@@ -80,6 +81,9 @@ const (
 	PathTerminate     = "/v2/on-demand/rentals/terminate"
 	PathReboot        = "/v2/on-demand/rentals/reboot-instance"
 	PathBalance       = "/v2/customer/balance"
+	// PathActiveRentalSummary counts active rentals and sums their hourly
+	// cost (GET).
+	PathActiveRentalSummary = "/v2/on-demand/active-rental-summary"
 	// PathSSHKeys lists (GET) and saves (POST) SSH keys.
 	PathSSHKeys      = "/v2/ssh-keys"
 	PathSSHKeyDelete = "/v2/ssh-keys/delete"
@@ -468,6 +472,31 @@ func (a *api) GetBalance(w http.ResponseWriter, r *http.Request) {
 	b := a.s.balance
 	a.s.mu.Unlock()
 	writeJSON(w, http.StatusOK, b)
+}
+
+// GetActiveRentalSummary counts the rentals ListActiveRentals serves and sums
+// their hourly cost. The fake rents on-demand only, so every rental falls under
+// that term type.
+func (a *api) GetActiveRentalSummary(w http.ResponseWriter, r *http.Request) {
+	if !a.authorized(w, r) {
+		return
+	}
+	a.s.mu.Lock()
+	var onDemand hyperbolic.RentalTermTypeSummary
+	for _, rental := range a.s.activeLocked() {
+		term, err := rental.CurrentTerm.AsOnDemandTerm()
+		if err != nil {
+			continue
+		}
+		onDemand.Count++
+		onDemand.CostPerHourCents += int(term.CostPerHour)
+	}
+	a.s.mu.Unlock()
+	writeJSON(w, http.StatusOK, hyperbolic.ActiveRentalSummary{
+		Count:            onDemand.Count,
+		CostPerHourCents: onDemand.CostPerHourCents,
+		ByTermType:       hyperbolic.ActiveRentalSummaryByTermType{OnDemand: onDemand},
+	})
 }
 
 // ListActiveRentals serves one page of active rentals, newest first, as the

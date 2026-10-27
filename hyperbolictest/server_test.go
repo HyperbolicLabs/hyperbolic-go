@@ -217,6 +217,34 @@ func TestTerminateExternally(t *testing.T) {
 	}
 }
 
+func TestActiveRentalSummary(t *testing.T) {
+	s := NewServer(t)
+	ctx := context.Background()
+	c := s.Client(t)
+	for _, p := range []hyperbolic.CreateRentalParams{h100x1(""), h100x1(""), vm(hyperbolic.GPUTypeH100, 8, "us-central-1", "")} {
+		if _, err := c.Rentals.Create(ctx, p); err != nil {
+			t.Fatal(err)
+		}
+	}
+	s.TerminateExternally(s.ActiveRentals()[0].RentalID) // the newest: the 8x rental
+
+	got, err := c.Rentals.ActiveSummary(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Two 1x rentals at 275 cents an hour remain.
+	want := hyperbolic.RentalTermTypeSummary{Count: 2, CostPerHourCents: 550}
+	if got.Count != want.Count || got.CostPerHourCents != want.CostPerHourCents || got.ByTermType.OnDemand != want {
+		t.Errorf("summary = %+v, want %+v in total and on demand", got, want)
+	}
+	if got.ByTermType.Reserved != (hyperbolic.RentalTermTypeSummary{}) || got.ByTermType.PrivateCloud != (hyperbolic.RentalTermTypeSummary{}) {
+		t.Errorf("summary by term type = %+v, want on-demand only", got.ByTermType)
+	}
+	if status, _, _ := raw(t, s, http.MethodGet, PathActiveRentalSummary, "", nil); status != http.StatusUnauthorized {
+		t.Errorf("summary without a key: %d, want 401", status)
+	}
+}
+
 func TestTerminateAndReboot(t *testing.T) {
 	s := NewServer(t)
 	ctx := context.Background()
