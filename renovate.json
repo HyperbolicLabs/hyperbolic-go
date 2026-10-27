@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "postUpdateOptions": ["gomodTidy"],
+  "labels": ["dependencies"],
+  "customManagers": [
+    {
+      "description": "Tool versions pinned in the Makefile and the CI workflow.",
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Makefile$/", "/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": [
+        "GOLANGCI_LINT_VERSION \\?= (?<currentValue>v[0-9.]+)",
+        "version: (?<currentValue>v[0-9.]+) # keep in sync with GOLANGCI_LINT_VERSION"
+      ],
+      "depNameTemplate": "github.com/golangci/golangci-lint/v2",
+      "datasourceTemplate": "go"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)Makefile$/"],
+      "matchStrings": ["GOVULNCHECK_VERSION \\?= (?<currentValue>v[0-9.]+)"],
+      "depNameTemplate": "golang.org/x/vuln",
+      "datasourceTemplate": "go"
+    }
+  ]
+}
