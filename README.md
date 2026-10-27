@@ -230,7 +230,7 @@ It also simulates status changes with `SetRentalStatus`, rentals ended by the pl
 
 ## Versioning
 
-hyperbolic-go follows [semantic versioning](https://semver.org/). Before 1.0 a minor version may change the Go API. The release notes call out every breaking change, and its pull request says what to change. The two most recent Go releases are supported, following Go's [release policy](https://go.dev/doc/devel/release#policy).
+hyperbolic-go follows [semantic versioning](https://semver.org/). Before 1.0 a minor version may change the Go API. The release notes call out every breaking change, and its pull request says what to change. Each release is checked against the exported API of the previous one, so the version number reflects what changed. The two most recent Go releases are supported, following Go's [release policy](https://go.dev/doc/devel/release#policy). [RELEASE.md](RELEASE.md) explains how releases are made.
 
 ## Getting help
 

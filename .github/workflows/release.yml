@@ -1,0 +1,78 @@
+name: Release
+
+# Releases the commit of main this workflow runs on: it checks that CI passed
+# on it, takes the version from the exported Go API change since the last
+# release (hack/release-version.sh), and only then creates the tag and the
+# GitHub Release. A Go module version is permanent once anyone fetches it, so
+# nothing is tagged before the checks pass. RELEASE.md explains the policy.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Leave empty to release the version gorelease suggests, or enter a pre-release of it (v0.3.0-rc.1) or a larger version (v1.0.0).
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    # Owners approve each run (Settings > Environments > release).
+    environment: release
+    permissions:
+      actions: read # read CI's result for the commit
+      contents: write # create the tag and the release
+    steps:
+      - name: Release only from main
+        run: |
+          if [ "$GITHUB_REF" != refs/heads/main ]; then
+            echo "::error::Releases are cut from main, not $GITHUB_REF."
+            exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0 # tags, for the previous release
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: stable
+
+      - name: Require CI to have passed on the commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          conclusion=$(gh run list --workflow ci.yml --commit "$GITHUB_SHA" --event push --limit 1 --json conclusion --jq '.[0].conclusion // ""')
+          if [ "$conclusion" != success ]; then
+            echo "::error::CI has not passed on $GITHUB_SHA (result: ${conclusion:-no finished run}). Wait for it, or fix main first."
+            exit 1
+          fi
+
+      - name: Choose the version
+        id: version
+        env:
+          GOPRIVATE: github.com/HyperbolicLabs/*
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED: ${{ inputs.version }}
+        run: |
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/HyperbolicLabs/hyperbolic-go".insteadOf "https://github.com/HyperbolicLabs/hyperbolic-go"
+          version=$(hack/release-version.sh "$REQUESTED")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Releasing $version" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create the tag and the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          flags=()
+          if [[ $VERSION == *-* ]]; then
+            flags+=(--prerelease)
+          fi
+          gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes "${flags[@]}"

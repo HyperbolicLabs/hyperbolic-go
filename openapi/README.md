@@ -4,7 +4,7 @@ What the SDK is generated from.
 
 | File | What it is | Who changes it |
 |---|---|---|
-| `openapi.json` | A pinned copy of the published spec, https://api.hyperbolic.ai/v2/openapi.json, indented so changes read as diffs. | `make spec-sync`. Never by hand. |
+| `openapi.json` | A pinned copy of the published spec, https://api.hyperbolic.ai/v2/openapi.json, indented so changes read as diffs. | `make spec-sync` and the daily sync job. Never by hand. |
 | `overlay.yaml` | An [OpenAPI Overlay](https://spec.openapis.org/overlay/v1.0.0) with fixes the published spec does not have yet. | By hand, one group per problem below. |
 | `sdk.yaml` | The SDK's surface: the operations it exposes, the Go name of each, whether it is safe to repeat, how it paginates, and Go names for the enums and unions the spec repeats inline. | By hand. |
 
@@ -15,6 +15,15 @@ What the SDK is generated from.
 - `operations_gen_test.go` and `testdata/responses/`, a test per operation and sample responses built from the spec. Each method must decode every sample without losing anything.
 
 Every generated file starts with the license header in `hack/boilerplate.go.txt` and is marked generated in `.gitattributes`, so GitHub collapses it in pull request diffs. CI fails when the committed files differ from what `make generate` writes.
+
+## When the published spec changes
+
+A daily job runs `make spec-sync`, which pulls the spec and regenerates. It opens a pull request with what changed for API clients according to [oasdiff](https://github.com/oasdiff/oasdiff), whether anything breaks them, and the test results. What to look for:
+
+- A new operation fails generation until `sdk.yaml` gives it a service, a method name and whether it is safe to repeat. The name becomes public API, so choose it deliberately.
+- A deprecated operation fails generation while `sdk.yaml` still lists it. Removing it from `sdk.yaml` is a breaking change for the SDK.
+- A breaking change fails the API changes check. Merging it needs the `breaking-api-change` label and a description of what users must change. Before 1.0 it ships in the next minor version.
+- An overlay action that no longer matches fails generation. Usually the spec now carries the fix, so delete the action and its row below.
 
 ## Adding an operation
 

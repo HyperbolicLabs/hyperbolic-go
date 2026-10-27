@@ -1,0 +1,102 @@
+name: Spec sync
+
+# Pulls the published OpenAPI spec every day. When it changed, regenerates
+# the SDK, runs the checks, and opens (or updates) a pull request saying what
+# changed for API clients and whether the checks passed.
+#
+# Pull requests opened with the workflow's own token do not start other
+# workflows, so this one runs the checks itself and reports them in the PR.
+# The repository must allow GitHub Actions to create pull requests
+# (Settings > Actions > General).
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: spec-sync
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: stable
+
+      - name: Pull the published spec and regenerate
+        id: sync
+        run: |
+          set +e
+          make spec-sync > generate.log 2>&1
+          echo "generate=$?" >> "$GITHUB_OUTPUT"
+          if [ -z "$(git status --porcelain -- . ':!generate.log')" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the checks
+        id: checks
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          set +e
+          make spec-diff BASE=origin/main > spec-diff.log 2>&1
+          echo "diff=$?" >> "$GITHUB_OUTPUT"
+          go test -count=1 ./... > test.log 2>&1
+          echo "test=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update the pull request
+        if: steps.sync.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GENERATE: ${{ steps.sync.outputs.generate }}
+          DIFF: ${{ steps.checks.outputs.diff }}
+          TEST: ${{ steps.checks.outputs.test }}
+        run: |
+          result() { [ "$1" = 0 ] && echo "passed" || echo "**failed**"; }
+          {
+            echo "The published spec at https://api.hyperbolic.ai/v2/openapi.json changed."
+            echo
+            echo "- Generate: $(result "$GENERATE")"
+            echo "- Breaking-change check: $(result "$DIFF")"
+            echo "- Tests: $(result "$TEST")"
+            echo
+            if [ "$GENERATE" != 0 ]; then
+              echo "Generation failed. A new operation needs a name in openapi/sdk.yaml, or an overlay action no longer matches:"
+              echo '```'; tail -n 40 generate.log; echo '```'
+            fi
+            echo "<details><summary>What changed for API clients</summary>"
+            echo
+            echo '```'; head -c 60000 spec-diff.log; echo '```'
+            echo "</details>"
+            if [ "$TEST" != 0 ]; then
+              echo
+              echo '<details><summary>Test output</summary>'
+              echo
+              echo '```'; tail -n 80 test.log; echo '```'
+              echo "</details>"
+            fi
+          } > body.md
+          rm -f generate.log spec-diff.log test.log
+
+          branch=bot/spec-sync
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$branch"
+          git add -A -- . ':!body.md'
+          git commit -m "chore(spec): sync the published OpenAPI spec"
+          git push --force origin "$branch"
+          if gh pr view "$branch" --json state --jq .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$branch" --body-file body.md
+          else
+            gh pr create --base main --head "$branch" --title "chore(spec): sync the published OpenAPI spec" --body-file body.md
+          fi

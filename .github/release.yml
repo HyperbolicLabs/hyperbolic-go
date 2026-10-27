@@ -1,0 +1,11 @@
+# Sections of the release notes GitHub generates from the pull requests merged
+# since the last release. Each pull request title is an entry, so titles are
+# written for the people reading the notes (see CONTRIBUTING.md).
+changelog:
+  categories:
+    - title: Breaking changes
+      labels: [breaking-api-change]
+    - title: Dependencies
+      labels: [dependencies]
+    - title: Changes
+      labels: ["*"]
