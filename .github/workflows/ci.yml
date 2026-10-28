@@ -70,16 +70,12 @@ jobs:
       # version), so the failure is this step's.
       - name: Compare the Go API with the last release
         continue-on-error: ${{ contains(github.event.pull_request.labels.*.name, 'breaking-api-change') }}
-        env:
-          GOPRIVATE: github.com/HyperbolicLabs/*
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -o pipefail
           if [ -z "$(git tag --list 'v*')" ]; then
             echo "No release yet, so nothing to compare."
             exit 0
           fi
-          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/HyperbolicLabs/hyperbolic-go".insteadOf "https://github.com/HyperbolicLabs/hyperbolic-go"
           make api-check | tee gorelease.txt
           if grep -q '^## incompatible changes' gorelease.txt; then
             echo "::error::This change breaks the exported Go API. If that is intended, label the pull request breaking-api-change and say in its description what users must change."
