@@ -57,11 +57,8 @@ jobs:
       - name: Choose the version
         id: version
         env:
-          GOPRIVATE: github.com/HyperbolicLabs/*
-          GH_TOKEN: ${{ github.token }}
           REQUESTED: ${{ inputs.version }}
         run: |
-          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/HyperbolicLabs/hyperbolic-go".insteadOf "https://github.com/HyperbolicLabs/hyperbolic-go"
           version=$(hack/release-version.sh "$REQUESTED")
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Releasing $version" >> "$GITHUB_STEP_SUMMARY"

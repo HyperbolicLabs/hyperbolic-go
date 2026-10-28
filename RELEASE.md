@@ -33,8 +33,6 @@ The Go module proxy and checksum database keep every version forever once anyone
 
 The workflow stops before tagging if CI did not pass on the commit, if the version already exists, or if the version is smaller than the API change allows. Otherwise it creates the tag and the GitHub Release.
 
-While the module is private, `make release-version` needs `GOPRIVATE` and Git credentials, like any other user of the module. Before the first release it compares against nothing and suggests `v0.1.0`.
-
 ## Withdrawing a release
 
 Never move or delete a published tag, because a moved tag breaks builds that already fetched it. To withdraw a bad version, release a new one whose `go.mod` [retracts](https://go.dev/ref/mod#go-mod-file-retract) it.

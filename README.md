@@ -29,12 +29,6 @@ The SDK is generated from Hyperbolic's published [OpenAPI specification](https:/
 go get github.com/HyperbolicLabs/hyperbolic-go
 ```
 
-While the repository is private, tell Go not to look the module up in the public proxy and checksum database, and give Git read access with an SSH key or an HTTPS token (`git config url."https://<token>@github.com/".insteadOf https://github.com/`).
-
-```console
-go env -w GOPRIVATE=github.com/HyperbolicLabs/*
-```
-
 ## Usage
 
 ### Quick start

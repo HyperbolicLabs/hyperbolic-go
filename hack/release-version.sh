@@ -20,9 +20,6 @@
 # the smallest version that fits the change. Without VERSION, that suggestion
 # is the version. With VERSION, it must not be smaller than the suggestion: it
 # may be a pre-release of it (v0.3.0-rc.1) or a larger version (v1.0.0).
-#
-# gorelease reads earlier releases through the Go toolchain, so for a private
-# module it needs GOPRIVATE and Git credentials, like any user.
 
 set -euo pipefail
 
