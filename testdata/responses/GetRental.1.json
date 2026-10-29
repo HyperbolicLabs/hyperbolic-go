@@ -60,6 +60,7 @@
       "name": "sample"
     },
     "monitoringEnabled": true,
+    "monitoringOptOut": true,
     "name": "sample",
     "networkInterfaces": [
       {

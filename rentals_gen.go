@@ -67,6 +67,9 @@ func (s *RentalsService) AttachSSHKey(ctx context.Context, params AttachSSHKeyPa
 
 // ConversionQuote calls GET /v2/on-demand/get-reserved-conversion-quote: get a
 // reserved conversion quote.
+//
+// Get a reserved conversion quote. Pass `termPeriodDays` to also get the price
+// for that length as `requestedOption`.
 func (s *RentalsService) ConversionQuote(ctx context.Context, params GetReservedConversionQuoteParams) (*ReservedConversionQuote, error) {
 	c := call{method: http.MethodGet, path: "/v2/on-demand/get-reserved-conversion-quote", idempotent: true, query: params.query()}
 	var out ReservedConversionQuote
@@ -79,6 +82,9 @@ func (s *RentalsService) ConversionQuote(ctx context.Context, params GetReserved
 func (p GetReservedConversionQuoteParams) query() url.Values {
 	q := url.Values{}
 	q.Set("rentalId", fmt.Sprint(p.RentalID))
+	if p.TermPeriodDays != nil {
+		q.Set("termPeriodDays", fmt.Sprint(*p.TermPeriodDays))
+	}
 	return q
 }
 
@@ -396,6 +402,24 @@ func (p ListReserveOptionsParams) query() url.Values {
 	return q
 }
 
+// SetMonitoringOptOut calls POST /v2/on-demand/rentals/monitoring-opt-out: opt
+// a rental in or out of Hyperbolic telemetry.
+//
+// Opt a running or pending virtual machine rental in or out of Hyperbolic
+// telemetry. Takes effect within a few minutes, without a restart. Collection
+// is on unless a rental is opted out. Only standalone virtual machine rentals
+// in supported regions can opt out, not Kubernetes cluster node pools: other
+// rentals get a 400. An unknown rental gets `RENTAL_NOT_FOUND`, and a failed
+// update a 500 that is safe to retry.
+func (s *RentalsService) SetMonitoringOptOut(ctx context.Context, params SetRentalMonitoringOptOutParams) (*SuccessResponse, error) {
+	c := call{method: http.MethodPost, path: "/v2/on-demand/rentals/monitoring-opt-out", idempotent: true, body: params}
+	var out SuccessResponse
+	if err := s.t.do(ctx, c, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // Terminate calls POST /v2/on-demand/rentals/terminate: terminate a rental.
 //
 // Terminate a virtual machine or bare metal rental.
@@ -557,7 +581,9 @@ func (e ConnectionType) Valid() bool {
 type ConvertRentalToReservedParams struct {
 	ExpectedTotalPriceCents int    `json:"expectedTotalPriceCents"`
 	RentalID                string `json:"rentalId"`
-	TermPeriodDays          int    `json:"termPeriodDays"`
+
+	// TermPeriodDays Any whole number of days from 1 to 90 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
+	TermPeriodDays int `json:"termPeriodDays"`
 }
 
 // CreateRentalParams defines model for CreateRentalParams.
@@ -577,6 +603,9 @@ type CreateRentalParams struct {
 	Label             *string  `json:"label,omitempty"`
 	MonitoringEnabled *bool    `json:"monitoringEnabled,omitempty"`
 
+	// MonitoringOptOut Virtual machines only. Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected. Omitted or `false` leaves collection on. Only standalone virtual machine rentals in supported regions can opt out; elsewhere `true` gets a 400.
+	MonitoringOptOut *bool `json:"monitoringOptOut,omitempty"`
+
 	// NetworkType Required for bare metal. Virtual machines default to `ethernet`.
 	NetworkType *CreateRentalParamsNetworkType `json:"networkType,omitempty"`
 
@@ -591,9 +620,11 @@ type CreateRentalParams struct {
 	SSHPublicKeyIds *[]int `json:"sshPublicKeyIds,omitempty"`
 
 	// StorageVolume Bare metal only.
-	StorageVolume  *StorageVolumeChoice `json:"storageVolume,omitempty"`
-	TermPeriodDays *int                 `json:"termPeriodDays,omitempty"`
-	TermType       *TermType            `json:"termType,omitempty"`
+	StorageVolume *StorageVolumeChoice `json:"storageVolume,omitempty"`
+
+	// TermPeriodDays Any whole number of days from 1 to 90 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
+	TermPeriodDays *int      `json:"termPeriodDays,omitempty"`
+	TermType       *TermType `json:"termType,omitempty"`
 }
 
 // CreateRentalParamsCUDAVersion Bare metal only.
@@ -691,10 +722,13 @@ func (e ExistingStorageVolumeIsNew) Valid() bool {
 
 // ExtendReservedRentalParams defines model for ExtendReservedRentalParams.
 type ExtendReservedRentalParams struct {
+	// ExpectedReservedUntil The reservation's current end date: the reservation extension quote's top-level `reservedUntil`, not the option's `newReservedUntil`. The extension is rejected if the end date has changed since the quote.
 	ExpectedReservedUntil   time.Time `json:"expectedReservedUntil"`
 	ExpectedTotalPriceCents int       `json:"expectedTotalPriceCents"`
 	RentalID                string    `json:"rentalId"`
-	TermPeriodDays          int       `json:"termPeriodDays"`
+
+	// TermPeriodDays Any whole number of days from 1 to 90 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
+	TermPeriodDays int `json:"termPeriodDays"`
 }
 
 // GPUFormFactor defines model for GPUFormFactor.
@@ -1467,38 +1501,41 @@ type RentalWithStatus struct {
 	CreatedAt                 time.Time               `json:"createdAt"`
 
 	// CreatedBy The user who created a rental.
-	CreatedBy               RentalCreator                        `json:"createdBy"`
-	CurrentTerm             RentalTerm                           `json:"currentTerm"`
-	EthernetVariant         nullable.Nullable[EthernetVariant]   `json:"ethernetVariant"`
-	ExposedPorts            []int                                `json:"exposedPorts"`
-	GPUCount                int                                  `json:"gpuCount"`
-	GPUFormFactor           GPUFormFactor                        `json:"gpuFormFactor"`
-	GPUType                 GPUType                              `json:"gpuType"`
-	Instances               *[]RentalInstance                    `json:"instances,omitempty"`
-	Label                   nullable.Nullable[string]            `json:"label"`
-	ManagedCluster          nullable.Nullable[ManagedClusterRef] `json:"managedCluster"`
-	MonitoringEnabled       bool                                 `json:"monitoringEnabled"`
-	Name                    nullable.Nullable[string]            `json:"name"`
-	NetworkInterfaces       []NetworkInterface                   `json:"networkInterfaces"`
-	Nodes                   []RentalNode                         `json:"nodes"`
-	OrgID                   nullable.Nullable[string]            `json:"orgId"`
-	PortMappings            []PortMapping                        `json:"portMappings"`
-	PrivateCluster          nullable.Nullable[PrivateCluster]    `json:"privateCluster"`
-	Region                  string                               `json:"region"`
-	RentalID                string                               `json:"rentalId"`
-	RentalType              RentalType                           `json:"rentalType"`
-	SSHEndpoints            []SSHEndpoint                        `json:"sshEndpoints"`
-	StartedAt               nullable.Nullable[time.Time]         `json:"startedAt"`
-	Status                  RentalStatus                         `json:"status"`
-	SupportsAttachedStorage bool                                 `json:"supportsAttachedStorage"`
-	SupportsCustomPorts     bool                                 `json:"supportsCustomPorts"`
-	SupportsMultipleSSHKeys bool                                 `json:"supportsMultipleSshKeys"`
-	SupportsPortForwarding  bool                                 `json:"supportsPortForwarding"`
-	SupportsSSHKeyUpdates   bool                                 `json:"supportsSshKeyUpdates"`
-	TerminatedAt            nullable.Nullable[time.Time]         `json:"terminatedAt"`
-	TerminationReason       nullable.Nullable[string]            `json:"terminationReason"`
-	UpdatedAt               nullable.Nullable[time.Time]         `json:"updatedAt"`
-	UserID                  string                               `json:"userId"`
+	CreatedBy         RentalCreator                        `json:"createdBy"`
+	CurrentTerm       RentalTerm                           `json:"currentTerm"`
+	EthernetVariant   nullable.Nullable[EthernetVariant]   `json:"ethernetVariant"`
+	ExposedPorts      []int                                `json:"exposedPorts"`
+	GPUCount          int                                  `json:"gpuCount"`
+	GPUFormFactor     GPUFormFactor                        `json:"gpuFormFactor"`
+	GPUType           GPUType                              `json:"gpuType"`
+	Instances         *[]RentalInstance                    `json:"instances,omitempty"`
+	Label             nullable.Nullable[string]            `json:"label"`
+	ManagedCluster    nullable.Nullable[ManagedClusterRef] `json:"managedCluster"`
+	MonitoringEnabled bool                                 `json:"monitoringEnabled"`
+
+	// MonitoringOptOut Whether the rental is opted out of Hyperbolic telemetry. Null where the rental can't opt out, or its setting couldn't be read.
+	MonitoringOptOut        nullable.Nullable[bool]           `json:"monitoringOptOut"`
+	Name                    nullable.Nullable[string]         `json:"name"`
+	NetworkInterfaces       []NetworkInterface                `json:"networkInterfaces"`
+	Nodes                   []RentalNode                      `json:"nodes"`
+	OrgID                   nullable.Nullable[string]         `json:"orgId"`
+	PortMappings            []PortMapping                     `json:"portMappings"`
+	PrivateCluster          nullable.Nullable[PrivateCluster] `json:"privateCluster"`
+	Region                  string                            `json:"region"`
+	RentalID                string                            `json:"rentalId"`
+	RentalType              RentalType                        `json:"rentalType"`
+	SSHEndpoints            []SSHEndpoint                     `json:"sshEndpoints"`
+	StartedAt               nullable.Nullable[time.Time]      `json:"startedAt"`
+	Status                  RentalStatus                      `json:"status"`
+	SupportsAttachedStorage bool                              `json:"supportsAttachedStorage"`
+	SupportsCustomPorts     bool                              `json:"supportsCustomPorts"`
+	SupportsMultipleSSHKeys bool                              `json:"supportsMultipleSshKeys"`
+	SupportsPortForwarding  bool                              `json:"supportsPortForwarding"`
+	SupportsSSHKeyUpdates   bool                              `json:"supportsSshKeyUpdates"`
+	TerminatedAt            nullable.Nullable[time.Time]      `json:"terminatedAt"`
+	TerminationReason       nullable.Nullable[string]         `json:"terminationReason"`
+	UpdatedAt               nullable.Nullable[time.Time]      `json:"updatedAt"`
+	UserID                  string                            `json:"userId"`
 }
 
 // RequestReservationParams defines model for RequestReservationParams.
@@ -1555,6 +1592,9 @@ type ReservedConversionQuote struct {
 	CostPerHourCents        float64                    `json:"costPerHourCents"`
 	EstimatedUsageTailCents float64                    `json:"estimatedUsageTailCents"`
 	Options                 []ReservedConversionOption `json:"options"`
+
+	// RequestedOption One term an on-demand rental can be converted to.
+	RequestedOption *ReservedConversionOption `json:"requestedOption,omitempty"`
 }
 
 // ReservedRentalConversion An on-demand rental converted to reserved, and what it cost.
@@ -1600,6 +1640,13 @@ func (e ReservedTermTermType) Valid() bool {
 	default:
 		return false
 	}
+}
+
+// SetRentalMonitoringOptOutParams defines model for SetRentalMonitoringOptOutParams.
+type SetRentalMonitoringOptOutParams struct {
+	// MonitoringOptOut Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected.
+	MonitoringOptOut bool   `json:"monitoringOptOut"`
+	RentalID         string `json:"rentalId"`
 }
 
 // SSHEndpoint Where to connect to a rental over SSH.
@@ -1788,7 +1835,8 @@ type GetReservationExtensionQuoteParams struct {
 
 // GetReservedConversionQuoteParams defines parameters for GetReservedConversionQuote.
 type GetReservedConversionQuoteParams struct {
-	RentalID string `form:"rentalId" json:"rentalId"`
+	RentalID       string `form:"rentalId" json:"rentalId"`
+	TermPeriodDays *int   `form:"termPeriodDays,omitempty" json:"termPeriodDays,omitempty"`
 }
 
 // HasRentalHistoryParams defines parameters for HasRentalHistory.
