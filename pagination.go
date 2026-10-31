@@ -17,6 +17,7 @@ limitations under the License.
 package hyperbolic
 
 import (
+	"errors"
 	"iter"
 
 	"github.com/oapi-codegen/nullable"
@@ -55,10 +56,20 @@ func pages[T any](first *int, fetch func(page int) ([]T, bool, error)) iter.Seq2
 // cursors iterates over the items of cursor-paginated results. fetch
 // returns a page's items and the cursor of the next page, nil on the last.
 // first is the cursor to start at, the first page when nil.
+// Repeated cursors end the iteration with an error before fetching that page again.
 func cursors[T any](first *string, fetch func(cursor *string) ([]T, *string, error)) iter.Seq2[T, error] {
 	return func(yield func(T, error) bool) {
 		cursor := first
+		seen := make(map[string]struct{})
 		for {
+			if cursor != nil {
+				if _, repeated := seen[*cursor]; repeated {
+					var zero T
+					yield(zero, errors.New("hyperbolic: repeated pagination cursor"))
+					return
+				}
+				seen[*cursor] = struct{}{}
+			}
 			items, next, err := fetch(cursor)
 			if err != nil {
 				var zero T
