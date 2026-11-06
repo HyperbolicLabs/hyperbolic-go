@@ -345,10 +345,12 @@ func (s *RentalsService) Options(ctx context.Context) ([]RentalOption, error) {
 // RebootInstance calls POST /v2/on-demand/rentals/reboot-instance: reboot a
 // single instance within a rental.
 //
-// Reboots one instance in place; tenant data is preserved. Call it only for an
-// instance whose `instances[].supportedFeatures` includes `guest-reboot`.
-// Reports INVALID_INSTANCE_REF for an `instanceRef` outside this rental,
-// REBOOT_NOT_SUPPORTED for a rental whose provider cannot reboot, and
+// Reboots one instance. Call it only for an instance whose
+// `instances[].supportsReboot` is true. Depending on the instance, this is
+// either a warm in-place guest reset or a hard power cycle. Disk contents are
+// preserved either way; unsaved in-memory work is lost. Reports
+// INVALID_INSTANCE_REF for an `instanceRef` outside this rental,
+// REBOOT_NOT_SUPPORTED for a rental that does not support reboot, and
 // REBOOT_ALREADY_IN_PROGRESS while one is in flight.
 //
 // It is not retried after a failure that may have reached the server. Such a
@@ -582,7 +584,7 @@ type ConvertRentalToReservedParams struct {
 	ExpectedTotalPriceCents int    `json:"expectedTotalPriceCents"`
 	RentalID                string `json:"rentalId"`
 
-	// TermPeriodDays Any whole number of days from 1 to 90 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
+	// TermPeriodDays Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
 	TermPeriodDays int `json:"termPeriodDays"`
 }
 
@@ -622,7 +624,7 @@ type CreateRentalParams struct {
 	// StorageVolume Bare metal only.
 	StorageVolume *StorageVolumeChoice `json:"storageVolume,omitempty"`
 
-	// TermPeriodDays Any whole number of days from 1 to 90 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
+	// TermPeriodDays Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
 	TermPeriodDays *int      `json:"termPeriodDays,omitempty"`
 	TermType       *TermType `json:"termType,omitempty"`
 }
@@ -722,12 +724,12 @@ func (e ExistingStorageVolumeIsNew) Valid() bool {
 
 // ExtendReservedRentalParams defines model for ExtendReservedRentalParams.
 type ExtendReservedRentalParams struct {
-	// ExpectedReservedUntil The reservation's current end date: the reservation extension quote's top-level `reservedUntil`, not the option's `newReservedUntil`. The extension is rejected if the end date has changed since the quote.
-	ExpectedReservedUntil   time.Time `json:"expectedReservedUntil"`
+	// CurrentReservedUntil The reservation's current end date: the reservation extension quote's top-level `reservedUntil`, not the option's `newReservedUntil`. The extension is rejected if the end date has changed since the quote.
+	CurrentReservedUntil    time.Time `json:"currentReservedUntil"`
 	ExpectedTotalPriceCents int       `json:"expectedTotalPriceCents"`
 	RentalID                string    `json:"rentalId"`
 
-	// TermPeriodDays Any whole number of days from 1 to 90 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
+	// TermPeriodDays Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`.
 	TermPeriodDays int `json:"termPeriodDays"`
 }
 
