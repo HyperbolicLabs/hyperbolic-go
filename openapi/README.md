@@ -23,6 +23,7 @@ A daily job runs `make spec-sync`, which pulls the spec and regenerates. It open
 - A new operation fails generation until `sdk.yaml` gives it a service, a method name and whether it is safe to repeat. The name becomes public API, so choose it deliberately.
 - A deprecated operation fails generation while `sdk.yaml` still lists it. Removing it from `sdk.yaml` is a breaking change for the SDK.
 - A breaking change fails the API changes check. Merging it needs the `breaking-api-change` label and a description of what users must change. Before 1.0 it ships in the next minor version.
+- A new region also fails the API changes check, because the published spec lists regions as a closed enum. The SDK reads regions as plain strings (fix 3 below), so nothing changes for Go users. Label the pull request and say so in its description.
 - An overlay action that no longer matches fails generation. Usually the spec now carries the fix, so delete the action and its row below.
 
 ## Adding an operation

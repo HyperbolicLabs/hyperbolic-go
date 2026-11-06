@@ -7,5 +7,10 @@
       "termPeriodDays": 7,
       "totalPriceCents": 7.5
     }
-  ]
+  ],
+  "requestedOption": {
+    "discountPercentage": 7.5,
+    "termPeriodDays": 7,
+    "totalPriceCents": 7.5
+  }
 }

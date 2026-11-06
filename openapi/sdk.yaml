@@ -74,6 +74,10 @@ services:
         operation: ondemand-detachSshKeyFromRental
         id: DetachSSHKey
         idempotent: true
+      SetMonitoringOptOut:
+        operation: ondemand-setRentalMonitoringOptOut
+        id: SetRentalMonitoringOptOut
+        idempotent: true
       ReserveOptions:
         operation: ondemand-getReserveOptions
         id: ListReserveOptions

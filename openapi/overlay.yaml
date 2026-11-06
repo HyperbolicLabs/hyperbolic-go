@@ -183,6 +183,12 @@ actions:
     update:
       type: string
       minLength: 1
+  - target: "$.paths['/v2/on-demand/rentals/monitoring-opt-out'].post.requestBody.content['application/json'].schema.properties.rentalId.anyOf"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/monitoring-opt-out'].post.requestBody.content['application/json'].schema.properties.rentalId"
+    update:
+      type: string
+      minLength: 1
   # Storage volume ids are strings in every response; requests also accept
   # an integer that no response returns.
   - target: "$.paths['/v2/on-demand/storage-volumes/attach'].post.requestBody.content['application/json'].schema.properties.storageVolumeId.anyOf"

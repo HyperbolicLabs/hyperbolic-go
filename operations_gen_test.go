@@ -137,6 +137,12 @@ var generatedOperations = []generatedOperation{
 		},
 	},
 	{
+		name: "Rentals.SetMonitoringOptOut", verb: "POST", path: "/v2/on-demand/rentals/monitoring-opt-out", id: "SetRentalMonitoringOptOut", idempotent: true,
+		call: func(ctx context.Context, c *hyperbolic.Client) (any, error) {
+			return c.Rentals.SetMonitoringOptOut(ctx, hyperbolic.SetRentalMonitoringOptOutParams{})
+		},
+	},
+	{
 		name: "Rentals.Terminate", verb: "POST", path: "/v2/on-demand/rentals/terminate", id: "TerminateRental", idempotent: true,
 		call: func(ctx context.Context, c *hyperbolic.Client) (any, error) {
 			return c.Rentals.Terminate(ctx, hyperbolic.TerminateRentalParams{})
