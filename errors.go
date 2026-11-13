@@ -238,8 +238,9 @@ func notFound(c call) error {
 	return fmt.Errorf("hyperbolic: %s %s: %w", c.method, c.path, ErrNotFound)
 }
 
-// decodeError preserves the cause of an unusable successful response. A
-// non-idempotent call may already have taken effect, so it requires lookup.
+// decodeError wraps a 2xx response the client could not decode. The call took
+// effect, so for a non-idempotent call the error matches ErrOutcomeUnknown and
+// the caller looks the result up.
 func decodeError(c call, err error) error {
 	err = fmt.Errorf("hyperbolic: decode %s %s response: %w", c.method, c.path, err)
 	if !c.idempotent {
