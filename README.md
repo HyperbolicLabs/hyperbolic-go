@@ -161,7 +161,7 @@ Every API failure is an `*hyperbolic.APIError` with the HTTP status, the machine
 
 Calls that are safe to repeat are retried on 429, 502, 503, 504 and transport errors, with exponential backoff and jitter, honoring `Retry-After`. If the server asks to wait longer than `RetryPolicy.MaxDelay`, the client returns the error instead of blocking, so a controller can requeue.
 
-Creating a rental is not idempotent, and the API has no idempotency key. A create that fails after the server applied it, through a 5xx, a timeout or a dropped connection, would rent the GPUs twice if retried blindly. The client retries such a call only on a 429 or when the connection never opened, the two cases where the server provably did not process it. Any other failure returns an error matching `ErrOutcomeUnknown`.
+Creating a rental is not idempotent, and the API has no idempotency key. A create that fails after the server applied it, through a 5xx, a timeout or a dropped connection, would rent the GPUs twice if retried blindly. The client retries such a call only on a 429 or when the connection never opened, the two cases where the server provably did not process it. Any other failure returns an error matching `ErrOutcomeUnknown`. This includes a successful HTTP response whose JSON cannot be decoded.
 
 ```go
 created, err := client.Rentals.Create(ctx, params)
