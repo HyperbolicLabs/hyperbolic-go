@@ -47,10 +47,11 @@ limitations under the License.
 // # Create safety
 //
 // If a call that is not safe to repeat, such as creating a rental, fails in a
-// way that leaves its outcome unknown (a 5xx response, a timeout, or a
-// dropped connection after the request was sent), it may have taken effect
-// even though it returned an error. The client never retries it in that
-// situation. Instead it returns an error matching [ErrOutcomeUnknown]:
+// way that leaves its outcome unknown (a 5xx response, a timeout, a dropped
+// connection after the request was sent, or a successful response the client
+// could not decode), it may have taken effect even though it returned an
+// error. The client never retries it in that situation. Instead it returns an
+// error matching [ErrOutcomeUnknown]:
 //
 //	created, err := client.Rentals.Create(ctx, params)
 //	if errors.Is(err, hyperbolic.ErrOutcomeUnknown) {
