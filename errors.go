@@ -238,9 +238,14 @@ func notFound(c call) error {
 	return fmt.Errorf("hyperbolic: %s %s: %w", c.method, c.path, ErrNotFound)
 }
 
-// decodeError wraps a 2xx response the client could not decode.
+// decodeError preserves the cause of an unusable successful response. A
+// non-idempotent call may already have taken effect, so it requires lookup.
 func decodeError(c call, err error) error {
-	return fmt.Errorf("hyperbolic: decode %s %s response: %w", c.method, c.path, err)
+	err = fmt.Errorf("hyperbolic: decode %s %s response: %w", c.method, c.path, err)
+	if !c.idempotent {
+		return &OutcomeUnknownError{Method: c.method, Path: c.path, Err: err}
+	}
+	return err
 }
 
 func parseRetryAfter(v string, now time.Time) time.Duration {
