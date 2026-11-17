@@ -22,6 +22,12 @@ actions:
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.totalAvailable"
     update:
       type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.spotAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.spotNoticeSeconds"
+    update:
+      type: integer
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.nodes.items.properties.gpuCount"
     update:
       type: integer
@@ -38,6 +44,12 @@ actions:
     update:
       type: integer
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.totalAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.spotAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.spotNoticeSeconds"
     update:
       type: integer
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.nodes.items.properties.gpuCount"

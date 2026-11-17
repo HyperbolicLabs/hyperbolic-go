@@ -18,8 +18,8 @@
       }
     ],
     "region": "sample",
-    "spotAvailable": 7.5,
-    "spotNoticeSeconds": 7.5,
+    "spotAvailable": 7,
+    "spotNoticeSeconds": 7,
     "spotOnly": true,
     "supportsCustomPorts": true,
     "supportsMultipleSshKeys": true,

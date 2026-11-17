@@ -539,10 +539,10 @@ type BareMetalOption struct {
 	Region string `json:"region"`
 
 	// SpotAvailable GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.
-	SpotAvailable *float64 `json:"spotAvailable,omitempty"`
+	SpotAvailable *int `json:"spotAvailable,omitempty"`
 
 	// SpotNoticeSeconds The shortest notice a new spot rental of this option would get before an interruption.
-	SpotNoticeSeconds *float64 `json:"spotNoticeSeconds,omitempty"`
+	SpotNoticeSeconds *int `json:"spotNoticeSeconds,omitempty"`
 
 	// SpotOnly Whether this option can only be rented on the spot term.
 	SpotOnly                *bool `json:"spotOnly,omitempty"`
@@ -1825,10 +1825,10 @@ type VirtualMachineOption struct {
 	Region string `json:"region"`
 
 	// SpotAvailable GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.
-	SpotAvailable *float64 `json:"spotAvailable,omitempty"`
+	SpotAvailable *int `json:"spotAvailable,omitempty"`
 
 	// SpotNoticeSeconds The shortest notice a new spot rental of this option would get before an interruption.
-	SpotNoticeSeconds *float64 `json:"spotNoticeSeconds,omitempty"`
+	SpotNoticeSeconds *int `json:"spotNoticeSeconds,omitempty"`
 
 	// SpotOnly Whether this option can only be rented on the spot term.
 	SpotOnly                *bool `json:"spotOnly,omitempty"`

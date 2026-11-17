@@ -24,6 +24,7 @@ A daily job runs `make spec-sync`, which pulls the spec and regenerates. It open
 - A deprecated operation fails generation while `sdk.yaml` still lists it. Removing it from `sdk.yaml` is a breaking change for the SDK.
 - A breaking change fails the API changes check. Merging it needs the `breaking-api-change` label and a description of what users must change. Before 1.0 it ships in the next minor version.
 - A new region also fails the API changes check, because the published spec lists regions as a closed enum. The SDK reads regions as plain strings (fix 3 below), so nothing changes for Go users. Label the pull request and say so in its description.
+- A new field typed `number` generates as a float. If it holds a whole number, such as a count or a number of seconds, add it to fix 1 below before it ships, because changing its type later breaks the Go API.
 - An overlay action that no longer matches fails generation. Usually the spec now carries the fix, so delete the action and its row below.
 
 ## Adding an operation
@@ -38,7 +39,7 @@ These problems in the published spec affect every client generated from it. Each
 
 | # | Problem | Where | Effect on typed clients | Suggested fix | Worked around in |
 |---|---|---|---|---|---|
-| 1 | Whole numbers typed `number` | 37 fields: counts such as `gpuCount`, `cpuCount` and `vcpuCount`, sizes such as `ramGb`, `storageGb`, `gpuMemoryGb` and `maxSizeInGb`, ports in `SshEndpoint.port`, `PortMapping.*Port` and `exposedPorts`, `termPeriodDays`, `totalAvailable` | Generated as floating point, `float32` with oapi-codegen's defaults | `type: integer`, which is `z.number().int()` in zod | `overlay.yaml` |
+| 1 | Whole numbers typed `number` | 41 fields: counts such as `gpuCount`, `cpuCount` and `vcpuCount`, sizes such as `ramGb`, `storageGb`, `gpuMemoryGb` and `maxSizeInGb`, ports in `SshEndpoint.port`, `PortMapping.*Port` and `exposedPorts`, `termPeriodDays`, `totalAvailable`, `spotAvailable`, `spotNoticeSeconds` | Generated as floating point, `float32` with oapi-codegen's defaults | `type: integer`, which is `z.number().int()` in zod | `overlay.yaml` |
 | 2 | Ids accept `integer \| string` | `rentalId` and `rentalIds` in 10 request fields, storage volume ids in 4 | Generated as an opaque union instead of a string, although responses only ever return strings | `type: string`. The integer variant of `rentalId` is already marked deprecated | `overlay.yaml` |
 | 3 | Regions are closed enums, and in requests a union of two | `region` in create bodies, rental options, responses and list filters | Clients that check enums reject regions added after their release, and requests get an opaque union | `type: string` with the known regions as `examples` | `overlay.yaml` |
 | 4 | Enums repeated inline | `gpuType` in 6 places, `gpuFormFactor` in 5, `connectionType` in 5, `rentalType` in 4, `termType`, `ethernetVariant`, and rental and storage volume `status` | One type per place they appear, such as `RentalGPUType` and `HistoricalRentalGPUType` | Named schemas in `components`, such as `GPUType` and `RentalStatus`, referenced with `$ref` | `sdk.yaml` `enums` |
