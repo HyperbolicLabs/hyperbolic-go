@@ -636,7 +636,8 @@
                   "termPeriodDays": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 90
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "discountPercentage": {
                     "default": 0,
@@ -878,6 +879,8 @@
                           "jp-east-1",
                           "us-southeast-3",
                           "eu-west-5",
+                          "jp-east-2",
+                          "sim-1",
                           "us-east-3"
                         ]
                       },
@@ -919,7 +922,8 @@
                   "termPeriodDays": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 90
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "discountPercentage": {
                     "default": 0,
@@ -957,6 +961,10 @@
                       "minimum": 1,
                       "maximum": 65535
                     }
+                  },
+                  "monitoringOptOut": {
+                    "description": "Virtual machines only. Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected. Omitted or `false` leaves collection on. Only standalone virtual machine rentals in supported regions can opt out; elsewhere `true` gets a 400.",
+                    "type": "boolean"
                   },
                   "cudaVersion": {
                     "description": "Bare metal only.",
@@ -1125,8 +1133,9 @@
                   },
                   "termPeriodDays": {
                     "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
+                    "minimum": 1,
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "expectedTotalPriceCents": {
                     "type": "integer",
@@ -1343,6 +1352,8 @@
                           "jp-east-1",
                           "us-southeast-3",
                           "eu-west-5",
+                          "jp-east-2",
+                          "sim-1",
                           "us-east-3"
                         ]
                       },
@@ -1595,6 +1606,8 @@
                       "jp-east-1",
                       "us-southeast-3",
                       "eu-west-5",
+                      "jp-east-2",
+                      "sim-1",
                       "us-east-3"
                     ]
                   },
@@ -1622,7 +1635,8 @@
                   "termPeriodDays": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 90
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "discountPercentage": {
                     "default": 0,
@@ -1633,6 +1647,10 @@
                     "type": "boolean"
                   },
                   "monitoringEnabled": {
+                    "type": "boolean"
+                  },
+                  "monitoringOptOut": {
+                    "description": "Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected. Omitted or `false` leaves collection on. Only standalone virtual machine rentals in supported regions can opt out; elsewhere `true` gets a 400.",
                     "type": "boolean"
                   },
                   "customPorts": {
@@ -1848,24 +1866,26 @@
                   "termPeriodDays": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 90
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "expectedTotalPriceCents": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
-                  "expectedReservedUntil": {
+                  "currentReservedUntil": {
                     "type": "string",
                     "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    "example": "2025-01-31T12:00:00.000Z",
+                    "description": "The reservation's current end date: the reservation extension quote's top-level `reservedUntil`, not the option's `newReservedUntil`. The extension is rejected if the end date has changed since the quote."
                   }
                 },
                 "required": [
                   "rentalId",
                   "termPeriodDays",
                   "expectedTotalPriceCents",
-                  "expectedReservedUntil"
+                  "currentReservedUntil"
                 ]
               }
             }
@@ -2274,6 +2294,8 @@
                 "jp-east-1",
                 "us-southeast-3",
                 "eu-west-5",
+                "jp-east-2",
+                "sim-1",
                 "us-east-3",
                 "uk-central-3",
                 "uk-southeast-3",
@@ -2471,6 +2493,8 @@
                 "jp-east-1",
                 "us-southeast-3",
                 "eu-west-5",
+                "jp-east-2",
+                "sim-1",
                 "us-east-3",
                 "uk-central-3",
                 "uk-southeast-3",
@@ -2635,6 +2659,8 @@
                                   "jp-east-1",
                                   "us-southeast-3",
                                   "eu-west-5",
+                                  "jp-east-2",
+                                  "sim-1",
                                   "us-east-3"
                                 ]
                               },
@@ -2788,6 +2814,8 @@
                                   "jp-east-1",
                                   "us-southeast-3",
                                   "eu-west-5",
+                                  "jp-east-2",
+                                  "sim-1",
                                   "us-east-3"
                                 ]
                               },
@@ -2971,8 +2999,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 90,
-              "description": "Also price an extension of this length, returned as `requestedOption`."
+              "maximum": 30,
+              "description": "Also price an extension of this length, returned as `requestedOption`. Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
             }
           }
         ],
@@ -3044,7 +3072,7 @@
       "get": {
         "operationId": "ondemand-getReservedConversionQuote",
         "summary": "Get a reserved conversion quote",
-        "description": "Get a reserved conversion quote",
+        "description": "Get a reserved conversion quote. Pass `termPeriodDays` to also get the price for that length as `requestedOption`.",
         "tags": [
           "rentals"
         ],
@@ -3061,6 +3089,16 @@
               "type": "string"
             },
             "required": true
+          },
+          {
+            "in": "query",
+            "name": "termPeriodDays",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30,
+              "description": "Also return a quote for the rental conversion by this length, as `requestedOption`. Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
+            }
           }
         ],
         "responses": {
@@ -3143,8 +3181,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 90,
-              "description": "Also get the discount for this term length, returned as `requestedOption`."
+              "maximum": 30,
+              "description": "Also get the discount for this term length, returned as `requestedOption`. Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
             }
           }
         ],
@@ -3325,7 +3363,7 @@
       "post": {
         "operationId": "ondemand-rebootRentalInstance",
         "summary": "Reboot a single instance within a rental",
-        "description": "Reboots one instance in place; tenant data is preserved. Call it only for an instance whose `instances[].supportedFeatures` includes `guest-reboot`. Reports INVALID_INSTANCE_REF for an `instanceRef` outside this rental, REBOOT_NOT_SUPPORTED for a rental whose provider cannot reboot, and REBOOT_ALREADY_IN_PROGRESS while one is in flight.",
+        "description": "Reboots one instance. Call it only for an instance whose `instances[].supportsReboot` is true. Depending on the instance, this is either a warm in-place guest reset or a hard power cycle. Disk contents are preserved either way; unsaved in-memory work is lost. Reports INVALID_INSTANCE_REF for an `instanceRef` outside this rental, REBOOT_NOT_SUPPORTED for a rental that does not support reboot, and REBOOT_ALREADY_IN_PROGRESS while one is in flight.",
         "tags": [
           "rentals"
         ],
@@ -4417,6 +4455,110 @@
                 "required": [
                   "rentalId",
                   "sshPublicKeyId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.BAD_REQUEST"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.UNAUTHORIZED"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.FORBIDDEN"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error.INTERNAL_SERVER_ERROR"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/on-demand/rentals/monitoring-opt-out": {
+      "post": {
+        "operationId": "ondemand-setRentalMonitoringOptOut",
+        "summary": "Opt a rental in or out of Hyperbolic telemetry",
+        "description": "Opt a running or pending virtual machine rental in or out of Hyperbolic telemetry. Takes effect within a few minutes, without a restart. Collection is on unless a rental is opted out. Only standalone virtual machine rentals in supported regions can opt out, not Kubernetes cluster node pools: other rentals get a 400. An unknown rental gets `RENTAL_NOT_FOUND`, and a failed update a 500 that is safe to retry.",
+        "tags": [
+          "rentals"
+        ],
+        "security": [
+          {
+            "Authorization": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rentalId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "The rental's `rentalId`."
+                      },
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991,
+                        "deprecated": true,
+                        "description": "Deprecated. The rental's legacy numeric id; use `rentalId`."
+                      }
+                    ]
+                  },
+                  "monitoringOptOut": {
+                    "type": "boolean",
+                    "description": "Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected."
+                  }
+                },
+                "required": [
+                  "rentalId",
+                  "monitoringOptOut"
                 ]
               }
             }
@@ -6386,7 +6528,8 @@
                   "termPeriodDays": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 90
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "discountPercentage": {
                     "default": 0,
@@ -6975,6 +7118,8 @@
                                   "jp-east-1",
                                   "us-southeast-3",
                                   "eu-west-5",
+                                  "jp-east-2",
+                                  "sim-1",
                                   "us-east-3"
                                 ]
                               },
@@ -7128,6 +7273,8 @@
                                   "jp-east-1",
                                   "us-southeast-3",
                                   "eu-west-5",
+                                  "jp-east-2",
+                                  "sim-1",
                                   "us-east-3"
                                 ]
                               },
@@ -7615,8 +7762,8 @@
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 90,
-              "description": "Also get the discount for this term length, returned as `requestedOption`."
+              "maximum": 30,
+              "description": "Also get the discount for this term length, returned as `requestedOption`. Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
             }
           }
         ],
@@ -7938,6 +8085,8 @@
                           "jp-east-1",
                           "us-southeast-3",
                           "eu-west-5",
+                          "jp-east-2",
+                          "sim-1",
                           "us-east-3"
                         ]
                       },
@@ -8744,6 +8893,8 @@
                       "jp-east-1",
                       "us-southeast-3",
                       "eu-west-5",
+                      "jp-east-2",
+                      "sim-1",
                       "us-east-3"
                     ]
                   },
@@ -8771,7 +8922,8 @@
                   "termPeriodDays": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 90
+                    "maximum": 30,
+                    "description": "Any whole number of days from 1 to 30 where custom reservation lengths are enabled for your account; otherwise one of the standard terms in `options` from `GET /v2/on-demand/reserve-options`."
                   },
                   "discountPercentage": {
                     "default": 0,
@@ -8782,6 +8934,10 @@
                     "type": "boolean"
                   },
                   "monitoringEnabled": {
+                    "type": "boolean"
+                  },
+                  "monitoringOptOut": {
+                    "description": "Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected. Omitted or `false` leaves collection on. Only standalone virtual machine rentals in supported regions can opt out; elsewhere `true` gets a 400.",
                     "type": "boolean"
                   },
                   "customPorts": {
@@ -9442,23 +9598,15 @@
             "type": "string"
           },
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "label": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "rentalType": {
@@ -9495,6 +9643,8 @@
               "jp-east-1",
               "us-southeast-3",
               "eu-west-5",
+              "jp-east-2",
+              "sim-1",
               "us-east-3",
               "uk-central-3",
               "uk-southeast-3",
@@ -9603,23 +9753,15 @@
             "type": "boolean"
           },
           "convertToOnDemandOnExpiry": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "terminationReason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "currentTerm": {
@@ -9819,13 +9961,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "createdBy": {
@@ -9898,23 +10036,15 @@
             "type": "string"
           },
           "cpuCount": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "number",
+              "null"
             ]
           },
           "vcpuCount": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "number",
+              "null"
             ]
           },
           "gpuCount": {
@@ -10031,26 +10161,18 @@
             "type": "string"
           },
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "email": {
             "type": "string"
           },
           "picture": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           }
         },
@@ -10067,36 +10189,24 @@
         "type": "object",
         "properties": {
           "gpuModel": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "location": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "sshUser": {
             "type": "string"
           },
           "sshPort": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "number",
+              "null"
             ]
           },
           "nodes": {
@@ -10136,23 +10246,15 @@
             ]
           },
           "hostname": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "publicIp": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "privateIp": {
@@ -10175,13 +10277,9 @@
             "type": "string"
           },
           "label": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           }
         },
@@ -10199,23 +10297,15 @@
             "type": "string"
           },
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "label": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "rentalType": {
@@ -10252,6 +10342,8 @@
               "jp-east-1",
               "us-southeast-3",
               "eu-west-5",
+              "jp-east-2",
+              "sim-1",
               "us-east-3",
               "uk-central-3",
               "uk-southeast-3",
@@ -10360,23 +10452,15 @@
             "type": "boolean"
           },
           "convertToOnDemandOnExpiry": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "terminationReason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "currentTerm": {
@@ -10576,13 +10660,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "createdBy": {
@@ -10626,6 +10706,13 @@
             "items": {
               "$ref": "#/components/schemas/RentalInstance"
             }
+          },
+          "monitoringOptOut": {
+            "description": "Whether the rental is opted out of Hyperbolic telemetry. Null where the rental can't opt out, or its setting couldn't be read.",
+            "type": [
+              "boolean",
+              "null"
+            ]
           }
         },
         "required": [
@@ -10663,7 +10750,8 @@
           "createdBy",
           "privateCluster",
           "managedCluster",
-          "status"
+          "status",
+          "monitoringOptOut"
         ],
         "additionalProperties": false,
         "description": "A GPU rental with its live status."
@@ -10678,23 +10766,15 @@
             "type": "string"
           },
           "ssh": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "internalIp": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "supportsReboot": {
@@ -10812,6 +10892,8 @@
                   "jp-east-1",
                   "us-southeast-3",
                   "eu-west-5",
+                  "jp-east-2",
+                  "sim-1",
                   "us-east-3"
                 ]
               },
@@ -10910,6 +10992,8 @@
                   "jp-east-1",
                   "us-southeast-3",
                   "eu-west-5",
+                  "jp-east-2",
+                  "sim-1",
                   "us-east-3"
                 ]
               },
@@ -10953,13 +11037,9 @@
             }
           },
           "terminationReason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "createdAt": {
@@ -11007,13 +11087,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           }
         },
@@ -11170,23 +11246,15 @@
             "type": "string"
           },
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "label": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "rentalType": {
@@ -11223,6 +11291,8 @@
               "jp-east-1",
               "us-southeast-3",
               "eu-west-5",
+              "jp-east-2",
+              "sim-1",
               "us-east-3",
               "uk-central-3",
               "uk-southeast-3",
@@ -11331,23 +11401,15 @@
             "type": "boolean"
           },
           "convertToOnDemandOnExpiry": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "terminationReason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "currentTerm": {
@@ -11540,13 +11602,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "createdBy": {
@@ -11674,13 +11732,9 @@
             }
           },
           "nextCursor": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "totalCount": {
@@ -11775,6 +11829,10 @@
             "items": {
               "$ref": "#/components/schemas/ReservedConversionOption"
             }
+          },
+          "requestedOption": {
+            "description": "A quote for the rental conversion by `termPeriodDays`. Only present when `termPeriodDays` is passed.",
+            "$ref": "#/components/schemas/ReservedConversionOption"
           }
         },
         "required": [
@@ -11969,53 +12027,33 @@
             "type": "string"
           },
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "picture": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "provider": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "emailVerified": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "isActive": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "createdAt": {
@@ -12036,23 +12074,15 @@
             ]
           },
           "onboardedFor": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "referralCode": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "role": {
@@ -12124,53 +12154,33 @@
             "type": "string"
           },
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "picture": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "provider": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "emailVerified": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "isActive": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "boolean",
+              "null"
             ]
           },
           "createdAt": {
@@ -12191,23 +12201,15 @@
             ]
           },
           "onboardedFor": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "referralCode": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           }
         },
@@ -12237,13 +12239,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "last4": {
@@ -12356,13 +12354,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "createdBy": {
@@ -12391,13 +12385,9 @@
         "type": "object",
         "properties": {
           "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "email": {
@@ -12442,13 +12432,9 @@
             "type": "string"
           },
           "orgId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+            "type": [
+              "string",
+              "null"
             ]
           },
           "createdBy": {

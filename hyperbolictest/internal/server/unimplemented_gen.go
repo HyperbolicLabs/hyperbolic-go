@@ -121,6 +121,11 @@ func (Unimplemented) ListReserveOptions(w http.ResponseWriter, _ *http.Request, 
 	http.Error(w, `{"code":"NOT_IMPLEMENTED","message":"hyperbolictest does not model Rentals.ReserveOptions"}`, http.StatusNotImplemented)
 }
 
+// SetRentalMonitoringOptOut answers POST /v2/on-demand/rentals/monitoring-opt-out with 501.
+func (Unimplemented) SetRentalMonitoringOptOut(w http.ResponseWriter, _ *http.Request) {
+	http.Error(w, `{"code":"NOT_IMPLEMENTED","message":"hyperbolictest does not model Rentals.SetMonitoringOptOut"}`, http.StatusNotImplemented)
+}
+
 // TerminateRental answers POST /v2/on-demand/rentals/terminate with 501.
 func (Unimplemented) TerminateRental(w http.ResponseWriter, _ *http.Request) {
 	http.Error(w, `{"code":"NOT_IMPLEMENTED","message":"hyperbolictest does not model Rentals.Terminate"}`, http.StatusNotImplemented)

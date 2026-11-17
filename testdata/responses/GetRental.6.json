@@ -57,6 +57,7 @@
     "label": null,
     "managedCluster": null,
     "monitoringEnabled": true,
+    "monitoringOptOut": null,
     "name": null,
     "networkInterfaces": [
       {

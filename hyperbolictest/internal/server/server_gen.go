@@ -69,6 +69,9 @@ type ServerInterface interface {
 	// ListRentalHistory List past rentals
 	// (GET /v2/on-demand/rentals/history)
 	ListRentalHistory(w http.ResponseWriter, r *http.Request, params hyperbolic.ListRentalHistoryParams)
+	// SetRentalMonitoringOptOut Opt a rental in or out of Hyperbolic telemetry
+	// (POST /v2/on-demand/rentals/monitoring-opt-out)
+	SetRentalMonitoringOptOut(w http.ResponseWriter, r *http.Request)
 	// RebootRentalInstance Reboot a single instance within a rental
 	// (POST /v2/on-demand/rentals/reboot-instance)
 	RebootRentalInstance(w http.ResponseWriter, r *http.Request)
@@ -280,6 +283,19 @@ func (siw *ServerInterfaceWrapper) GetReservedConversionQuote(w http.ResponseWri
 			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "rentalId"})
 		} else {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "rentalId", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "termPeriodDays" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "termPeriodDays", r.URL.Query(), &params.TermPeriodDays, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "termPeriodDays"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "termPeriodDays", Err: err})
 		}
 		return
 	}
@@ -615,6 +631,20 @@ func (siw *ServerInterfaceWrapper) ListRentalHistory(w http.ResponseWriter, r *h
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.ListRentalHistory(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SetRentalMonitoringOptOut operation middleware
+func (siw *ServerInterfaceWrapper) SetRentalMonitoringOptOut(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SetRentalMonitoringOptOut(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1103,6 +1133,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v2/on-demand/rentals", wrapper.CreateRental)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v2/on-demand/rentals/active", wrapper.ListActiveRentals)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v2/on-demand/rentals/history", wrapper.ListRentalHistory)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v2/on-demand/rentals/monitoring-opt-out", wrapper.SetRentalMonitoringOptOut)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v2/on-demand/rentals/reboot-instance", wrapper.RebootRentalInstance)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v2/on-demand/rentals/ssh-keys/attach", wrapper.AttachSSHKey)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v2/on-demand/rentals/ssh-keys/detach", wrapper.DetachSSHKey)
