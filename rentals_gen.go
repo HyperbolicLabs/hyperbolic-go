@@ -348,10 +348,13 @@ func (s *RentalsService) Options(ctx context.Context) ([]RentalOption, error) {
 // Reboots one instance. Call it only for an instance whose
 // `instances[].supportsReboot` is true. Depending on the instance, this is
 // either a warm in-place guest reset or a hard power cycle. Disk contents are
-// preserved either way; unsaved in-memory work is lost. Reports
-// INVALID_INSTANCE_REF for an `instanceRef` outside this rental,
-// REBOOT_NOT_SUPPORTED for a rental that does not support reboot, and
-// REBOOT_ALREADY_IN_PROGRESS while one is in flight.
+// preserved either way; unsaved in-memory work is lost. `instanceRef` is an
+// entry of the rental's `instances[].instanceRef` (`<rentalId>-<node index>`).
+// Reports INVALID_INSTANCE_REF for an `instanceRef` outside this rental,
+// REBOOT_NOT_SUPPORTED for a rental that does not support reboot,
+// REBOOT_ALREADY_IN_PROGRESS while one is in flight, and
+// INSTANCE_NOT_READY_FOR_REBOOT when the instance is not running or has another
+// operation in progress.
 //
 // It is not retried after a failure that may have reached the server. Such a
 // failure matches [ErrOutcomeUnknown]: check whether the call took effect
@@ -533,11 +536,20 @@ type BareMetalOption struct {
 		RAMGb     int    `json:"ramGb"`
 		StorageGb int    `json:"storageGb"`
 	} `json:"nodes"`
-	Region                  string `json:"region"`
-	SupportsCustomPorts     bool   `json:"supportsCustomPorts"`
-	SupportsMultipleSSHKeys bool   `json:"supportsMultipleSshKeys"`
-	SupportsSSHKeyUpdates   bool   `json:"supportsSshKeyUpdates"`
-	TotalAvailable          *int   `json:"totalAvailable,omitempty"`
+	Region string `json:"region"`
+
+	// SpotAvailable GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.
+	SpotAvailable *float64 `json:"spotAvailable,omitempty"`
+
+	// SpotNoticeSeconds The shortest notice a new spot rental of this option would get before an interruption.
+	SpotNoticeSeconds *float64 `json:"spotNoticeSeconds,omitempty"`
+
+	// SpotOnly Whether this option can only be rented on the spot term.
+	SpotOnly                *bool `json:"spotOnly,omitempty"`
+	SupportsCustomPorts     bool  `json:"supportsCustomPorts"`
+	SupportsMultipleSSHKeys bool  `json:"supportsMultipleSshKeys"`
+	SupportsSSHKeyUpdates   bool  `json:"supportsSshKeyUpdates"`
+	TotalAvailable          *int  `json:"totalAvailable,omitempty"`
 }
 
 // BareMetalOptionMachineType defines model for BareMetalOption.MachineType.
@@ -763,6 +775,7 @@ type GPUType string
 // Defines values for GPUType.
 const (
 	GPUTypeB200       GPUType = "b200"
+	GPUTypeB300       GPUType = "b300"
 	GPUTypeH100       GPUType = "h100"
 	GPUTypeH200       GPUType = "h200"
 	GPUTypeRtx6000Pro GPUType = "rtx-6000-pro"
@@ -772,6 +785,8 @@ const (
 func (e GPUType) Valid() bool {
 	switch e {
 	case GPUTypeB200:
+		return true
+	case GPUTypeB300:
 		return true
 	case GPUTypeH100:
 		return true
@@ -1516,28 +1531,31 @@ type RentalWithStatus struct {
 	MonitoringEnabled bool                                 `json:"monitoringEnabled"`
 
 	// MonitoringOptOut Whether the rental is opted out of Hyperbolic telemetry. Null where the rental can't opt out, or its setting couldn't be read.
-	MonitoringOptOut        nullable.Nullable[bool]           `json:"monitoringOptOut"`
-	Name                    nullable.Nullable[string]         `json:"name"`
-	NetworkInterfaces       []NetworkInterface                `json:"networkInterfaces"`
-	Nodes                   []RentalNode                      `json:"nodes"`
-	OrgID                   nullable.Nullable[string]         `json:"orgId"`
-	PortMappings            []PortMapping                     `json:"portMappings"`
-	PrivateCluster          nullable.Nullable[PrivateCluster] `json:"privateCluster"`
-	Region                  string                            `json:"region"`
-	RentalID                string                            `json:"rentalId"`
-	RentalType              RentalType                        `json:"rentalType"`
-	SSHEndpoints            []SSHEndpoint                     `json:"sshEndpoints"`
-	StartedAt               nullable.Nullable[time.Time]      `json:"startedAt"`
-	Status                  RentalStatus                      `json:"status"`
-	SupportsAttachedStorage bool                              `json:"supportsAttachedStorage"`
-	SupportsCustomPorts     bool                              `json:"supportsCustomPorts"`
-	SupportsMultipleSSHKeys bool                              `json:"supportsMultipleSshKeys"`
-	SupportsPortForwarding  bool                              `json:"supportsPortForwarding"`
-	SupportsSSHKeyUpdates   bool                              `json:"supportsSshKeyUpdates"`
-	TerminatedAt            nullable.Nullable[time.Time]      `json:"terminatedAt"`
-	TerminationReason       nullable.Nullable[string]         `json:"terminationReason"`
-	UpdatedAt               nullable.Nullable[time.Time]      `json:"updatedAt"`
-	UserID                  string                            `json:"userId"`
+	MonitoringOptOut  nullable.Nullable[bool]           `json:"monitoringOptOut"`
+	Name              nullable.Nullable[string]         `json:"name"`
+	NetworkInterfaces []NetworkInterface                `json:"networkInterfaces"`
+	Nodes             []RentalNode                      `json:"nodes"`
+	OrgID             nullable.Nullable[string]         `json:"orgId"`
+	PortMappings      []PortMapping                     `json:"portMappings"`
+	PrivateCluster    nullable.Nullable[PrivateCluster] `json:"privateCluster"`
+	Region            string                            `json:"region"`
+	RentalID          string                            `json:"rentalId"`
+	RentalType        RentalType                        `json:"rentalType"`
+
+	// SpotInterruptAt When a spot rental's scheduled interruption ends it: the capacity is needed back and the rental is terminated at this time. Null when no interruption is scheduled.
+	SpotInterruptAt         nullable.Nullable[time.Time] `json:"spotInterruptAt"`
+	SSHEndpoints            []SSHEndpoint                `json:"sshEndpoints"`
+	StartedAt               nullable.Nullable[time.Time] `json:"startedAt"`
+	Status                  RentalStatus                 `json:"status"`
+	SupportsAttachedStorage bool                         `json:"supportsAttachedStorage"`
+	SupportsCustomPorts     bool                         `json:"supportsCustomPorts"`
+	SupportsMultipleSSHKeys bool                         `json:"supportsMultipleSshKeys"`
+	SupportsPortForwarding  bool                         `json:"supportsPortForwarding"`
+	SupportsSSHKeyUpdates   bool                         `json:"supportsSshKeyUpdates"`
+	TerminatedAt            nullable.Nullable[time.Time] `json:"terminatedAt"`
+	TerminationReason       nullable.Nullable[string]    `json:"terminationReason"`
+	UpdatedAt               nullable.Nullable[time.Time] `json:"updatedAt"`
+	UserID                  string                       `json:"userId"`
 }
 
 // RequestReservationParams defines model for RequestReservationParams.
@@ -1804,11 +1822,20 @@ type VirtualMachineOption struct {
 		StorageGb int    `json:"storageGb"`
 		VcpuCount int    `json:"vcpuCount"`
 	} `json:"nodes"`
-	Region                  string `json:"region"`
-	SupportsCustomPorts     bool   `json:"supportsCustomPorts"`
-	SupportsMultipleSSHKeys bool   `json:"supportsMultipleSshKeys"`
-	SupportsSSHKeyUpdates   bool   `json:"supportsSshKeyUpdates"`
-	TotalAvailable          *int   `json:"totalAvailable,omitempty"`
+	Region string `json:"region"`
+
+	// SpotAvailable GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.
+	SpotAvailable *float64 `json:"spotAvailable,omitempty"`
+
+	// SpotNoticeSeconds The shortest notice a new spot rental of this option would get before an interruption.
+	SpotNoticeSeconds *float64 `json:"spotNoticeSeconds,omitempty"`
+
+	// SpotOnly Whether this option can only be rented on the spot term.
+	SpotOnly                *bool `json:"spotOnly,omitempty"`
+	SupportsCustomPorts     bool  `json:"supportsCustomPorts"`
+	SupportsMultipleSSHKeys bool  `json:"supportsMultipleSshKeys"`
+	SupportsSSHKeyUpdates   bool  `json:"supportsSshKeyUpdates"`
+	TotalAvailable          *int  `json:"totalAvailable,omitempty"`
 }
 
 // VirtualMachineOptionMachineType defines model for VirtualMachineOption.MachineType.

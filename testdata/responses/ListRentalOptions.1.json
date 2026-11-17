@@ -18,6 +18,9 @@
       }
     ],
     "region": "sample",
+    "spotAvailable": 7.5,
+    "spotNoticeSeconds": 7.5,
+    "spotOnly": true,
     "supportsCustomPorts": true,
     "supportsMultipleSshKeys": true,
     "supportsSshKeyUpdates": true,

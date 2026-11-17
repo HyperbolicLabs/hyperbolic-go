@@ -87,6 +87,7 @@
       "region": "sample",
       "rentalId": "sample",
       "rentalType": "virtual-machine",
+      "spotInterruptAt": null,
       "sshEndpoints": [
         {
           "host": "sample",
