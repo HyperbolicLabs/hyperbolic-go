@@ -6,7 +6,7 @@
     "ethernetVariant": "normal",
     "gpuCount": 7,
     "gpuFormFactor": "sxm5",
-    "gpuType": "h100",
+    "gpuType": "sample",
     "machineType": "virtual-machine",
     "nodes": [
       {

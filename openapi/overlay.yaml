@@ -270,3 +270,22 @@ actions:
     remove: true
   - target: "$.components.schemas.HistoricalRental.properties.region.enum"
     remove: true
+  # GPU types are closed enums. Like regions, they are added often, so the
+  # SDK takes and returns any string rather than needing a release for each
+  # new one. Rental options list the types an account can rent.
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.gpuType.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.gpuType.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.gpuType.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/active'].get.parameters[2].schema.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/history'].get.parameters[2].schema.enum"
+    remove: true
+  - target: "$.components.schemas.Rental.properties.gpuType.enum"
+    remove: true
+  - target: "$.components.schemas.RentalWithStatus.properties.gpuType.enum"
+    remove: true
+  - target: "$.components.schemas.HistoricalRental.properties.gpuType.enum"
+    remove: true

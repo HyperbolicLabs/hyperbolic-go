@@ -315,8 +315,8 @@ func header(boilerplate []byte, src string) string {
 	return strings.TrimRight(string(boilerplate), "\n") + "\n\n" + banner + src
 }
 
-// compatibility prefixes every enum constant with its type (GPUTypeH100,
-// not H100), so a constant names what it is.
+// compatibility prefixes every enum constant with its type (RentalStatusRunning,
+// not Running), so a constant names what it is.
 var compatibility = codegen.CompatibilityOptions{AlwaysPrefixEnumValues: true}
 
 func outputOptions(conf *sdkFile, spec *openapi3.T, o codegen.OutputOptions) codegen.OutputOptions {

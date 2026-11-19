@@ -6,7 +6,7 @@
     "ethernetVariant": "rocev2",
     "gpuCount": 7,
     "gpuFormFactor": "sxm6",
-    "gpuType": "h200",
+    "gpuType": "sample",
     "machineType": "bare-metal",
     "nodes": [
       {

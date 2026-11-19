@@ -187,8 +187,6 @@ services:
 # with its variants named in order and a discriminator on the property that
 # tells them apart, which the spec does not declare yet.
 enums:
-  GPUType:
-    property: gpuType
   GPUFormFactor:
     property: gpuFormFactor
   ConnectionType:

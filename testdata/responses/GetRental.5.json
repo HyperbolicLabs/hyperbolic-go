@@ -34,7 +34,7 @@
     ],
     "gpuCount": 7,
     "gpuFormFactor": "pcie",
-    "gpuType": "b200",
+    "gpuType": "sample",
     "instances": [
       {
         "actualResources": {

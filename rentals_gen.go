@@ -527,7 +527,7 @@ type BareMetalOption struct {
 	EthernetVariant  *EthernetVariant           `json:"ethernetVariant,omitempty"`
 	GPUCount         int                        `json:"gpuCount"`
 	GPUFormFactor    GPUFormFactor              `json:"gpuFormFactor"`
-	GPUType          GPUType                    `json:"gpuType"`
+	GPUType          string                     `json:"gpuType"`
 	MachineType      BareMetalOptionMachineType `json:"machineType"`
 	Nodes            []struct {
 		CPUCount  int    `json:"cpuCount"`
@@ -612,10 +612,10 @@ type CreateRentalParams struct {
 	DiscountPercentage *float64 `json:"discountPercentage,omitempty"`
 
 	// GPUCount GPUs to rent. Bare metal rents whole nodes, so a multiple of 8.
-	GPUCount          int      `json:"gpuCount"`
-	GPUType           *GPUType `json:"gpuType,omitempty"`
-	Label             *string  `json:"label,omitempty"`
-	MonitoringEnabled *bool    `json:"monitoringEnabled,omitempty"`
+	GPUCount          int     `json:"gpuCount"`
+	GPUType           *string `json:"gpuType,omitempty"`
+	Label             *string `json:"label,omitempty"`
+	MonitoringEnabled *bool   `json:"monitoringEnabled,omitempty"`
 
 	// MonitoringOptOut Virtual machines only. Opt the rental out of Hyperbolic telemetry: the GPU health and system metrics (CPU, memory, root filesystem, network interfaces) Hyperbolic collects from inside the virtual machine to detect hardware faults. No logs, process lists or file contents are collected. Omitted or `false` leaves collection on. Only standalone virtual machine rentals in supported regions can opt out; elsewhere `true` gets a 400.
 	MonitoringOptOut *bool `json:"monitoringOptOut,omitempty"`
@@ -769,36 +769,6 @@ func (e GPUFormFactor) Valid() bool {
 	}
 }
 
-// GPUType defines model for GPUType.
-type GPUType string
-
-// Defines values for GPUType.
-const (
-	GPUTypeB200       GPUType = "b200"
-	GPUTypeB300       GPUType = "b300"
-	GPUTypeH100       GPUType = "h100"
-	GPUTypeH200       GPUType = "h200"
-	GPUTypeRtx6000Pro GPUType = "rtx-6000-pro"
-)
-
-// Valid indicates whether the value is a known member of the GPUType enum.
-func (e GPUType) Valid() bool {
-	switch e {
-	case GPUTypeB200:
-		return true
-	case GPUTypeB300:
-		return true
-	case GPUTypeH100:
-		return true
-	case GPUTypeH200:
-		return true
-	case GPUTypeRtx6000Pro:
-		return true
-	default:
-		return false
-	}
-}
-
 // HistoricalRental A GPU rental that has ended, with its total cost.
 type HistoricalRental struct {
 	AttachedStorage           []AttachedStorage       `json:"attachedStorage"`
@@ -813,7 +783,7 @@ type HistoricalRental struct {
 	ExposedPorts            []int                                `json:"exposedPorts"`
 	GPUCount                int                                  `json:"gpuCount"`
 	GPUFormFactor           GPUFormFactor                        `json:"gpuFormFactor"`
-	GPUType                 GPUType                              `json:"gpuType"`
+	GPUType                 string                               `json:"gpuType"`
 	Label                   nullable.Nullable[string]            `json:"label"`
 	ManagedCluster          nullable.Nullable[ManagedClusterRef] `json:"managedCluster"`
 	MonitoringEnabled       bool                                 `json:"monitoringEnabled"`
@@ -1006,7 +976,7 @@ type Rental struct {
 	ExposedPorts            []int                                `json:"exposedPorts"`
 	GPUCount                int                                  `json:"gpuCount"`
 	GPUFormFactor           GPUFormFactor                        `json:"gpuFormFactor"`
-	GPUType                 GPUType                              `json:"gpuType"`
+	GPUType                 string                               `json:"gpuType"`
 	Label                   nullable.Nullable[string]            `json:"label"`
 	ManagedCluster          nullable.Nullable[ManagedClusterRef] `json:"managedCluster"`
 	MonitoringEnabled       bool                                 `json:"monitoringEnabled"`
@@ -1524,7 +1494,7 @@ type RentalWithStatus struct {
 	ExposedPorts      []int                                `json:"exposedPorts"`
 	GPUCount          int                                  `json:"gpuCount"`
 	GPUFormFactor     GPUFormFactor                        `json:"gpuFormFactor"`
-	GPUType           GPUType                              `json:"gpuType"`
+	GPUType           string                               `json:"gpuType"`
 	Instances         *[]RentalInstance                    `json:"instances,omitempty"`
 	Label             nullable.Nullable[string]            `json:"label"`
 	ManagedCluster    nullable.Nullable[ManagedClusterRef] `json:"managedCluster"`
@@ -1813,7 +1783,7 @@ type VirtualMachineOption struct {
 	EthernetVariant  *EthernetVariant                `json:"ethernetVariant,omitempty"`
 	GPUCount         int                             `json:"gpuCount"`
 	GPUFormFactor    GPUFormFactor                   `json:"gpuFormFactor"`
-	GPUType          GPUType                         `json:"gpuType"`
+	GPUType          string                          `json:"gpuType"`
 	MachineType      VirtualMachineOptionMachineType `json:"machineType"`
 	Nodes            []struct {
 		CPUModel  string `json:"cpuModel"`
@@ -1883,7 +1853,7 @@ type GetRentalParams struct {
 type ListActiveRentalsParams struct {
 	Page                *int        `form:"page,omitempty" json:"page,omitempty"`
 	PageSize            *int        `form:"pageSize,omitempty" json:"pageSize,omitempty"`
-	GPUType             *GPUType    `form:"gpuType,omitempty" json:"gpuType,omitempty"`
+	GPUType             *string     `form:"gpuType,omitempty" json:"gpuType,omitempty"`
 	Region              *string     `form:"region,omitempty" json:"region,omitempty"`
 	TermType            *TermType   `form:"termType,omitempty" json:"termType,omitempty"`
 	IncludePrivateCloud *bool       `form:"includePrivateCloud,omitempty" json:"includePrivateCloud,omitempty"`
@@ -1895,7 +1865,7 @@ type ListActiveRentalsParams struct {
 type ListRentalHistoryParams struct {
 	Cursor              *string     `form:"cursor,omitempty" json:"cursor,omitempty"`
 	Limit               *int        `form:"limit,omitempty" json:"limit,omitempty"`
-	GPUType             *GPUType    `form:"gpuType,omitempty" json:"gpuType,omitempty"`
+	GPUType             *string     `form:"gpuType,omitempty" json:"gpuType,omitempty"`
 	Region              *string     `form:"region,omitempty" json:"region,omitempty"`
 	TermType            *TermType   `form:"termType,omitempty" json:"termType,omitempty"`
 	IncludePrivateCloud *bool       `form:"includePrivateCloud,omitempty" json:"includePrivateCloud,omitempty"`

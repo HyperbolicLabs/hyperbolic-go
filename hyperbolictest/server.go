@@ -190,9 +190,9 @@ func VirtualMachineOption(o hyperbolic.VirtualMachineOption) hyperbolic.RentalOp
 // DefaultRentalOptions is the set of rental options a new Server starts with.
 func DefaultRentalOptions() []hyperbolic.RentalOption {
 	return []hyperbolic.RentalOption{
-		VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, CostPerHourCents: 275, Region: "us-central-1", GPUType: hyperbolic.GPUTypeH100, GPUCount: 1, ConnectionType: hyperbolic.ConnectionTypeEthernet, TotalAvailable: hyperbolic.Ptr(9)}),
-		VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, CostPerHourCents: 2200, Region: "us-central-1", GPUType: hyperbolic.GPUTypeH100, GPUCount: 8, ConnectionType: hyperbolic.ConnectionTypeInfiniband, TotalAvailable: hyperbolic.Ptr(2)}),
-		VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, CostPerHourCents: 3192, Region: "ca-east-1", GPUType: hyperbolic.GPUTypeH200, GPUCount: 8, ConnectionType: hyperbolic.ConnectionTypeEthernet}),
+		VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, CostPerHourCents: 275, Region: "us-central-1", GPUType: "h100", GPUCount: 1, ConnectionType: hyperbolic.ConnectionTypeEthernet, TotalAvailable: hyperbolic.Ptr(9)}),
+		VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, CostPerHourCents: 2200, Region: "us-central-1", GPUType: "h100", GPUCount: 8, ConnectionType: hyperbolic.ConnectionTypeInfiniband, TotalAvailable: hyperbolic.Ptr(2)}),
+		VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, CostPerHourCents: 3192, Region: "ca-east-1", GPUType: "h200", GPUCount: 8, ConnectionType: hyperbolic.ConnectionTypeEthernet}),
 	}
 }
 

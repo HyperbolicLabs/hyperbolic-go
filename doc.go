@@ -28,7 +28,7 @@ limitations under the License.
 //	if err != nil { ... }
 //	created, err := client.Rentals.Create(ctx, hyperbolic.CreateRentalParams{
 //		RentalType: hyperbolic.RentalTypeVirtualMachine,
-//		GPUType:    hyperbolic.Ptr(hyperbolic.GPUTypeH100),
+//		GPUType:    hyperbolic.Ptr("h100"),
 //		GPUCount:   1,
 //	})
 //
