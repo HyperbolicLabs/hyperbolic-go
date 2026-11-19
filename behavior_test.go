@@ -34,7 +34,7 @@ import (
 func h100x1(label string) hyperbolic.CreateRentalParams {
 	p := hyperbolic.CreateRentalParams{
 		RentalType: hyperbolic.RentalTypeVirtualMachine,
-		GPUType:    hyperbolic.Ptr(hyperbolic.GPUTypeH100),
+		GPUType:    hyperbolic.Ptr("h100"),
 		GPUCount:   1,
 		Region:     hyperbolic.Ptr("us-central-1"),
 	}

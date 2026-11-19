@@ -6,7 +6,7 @@
     "ethernetVariant": "rocev2",
     "gpuCount": 7,
     "gpuFormFactor": "sxm6",
-    "gpuType": "h200",
+    "gpuType": "sample",
     "machineType": "bare-metal",
     "nodes": [
       {
@@ -18,6 +18,9 @@
       }
     ],
     "region": "sample",
+    "spotAvailable": 7,
+    "spotNoticeSeconds": 7,
+    "spotOnly": true,
     "supportsCustomPorts": true,
     "supportsMultipleSshKeys": true,
     "supportsSshKeyUpdates": true,

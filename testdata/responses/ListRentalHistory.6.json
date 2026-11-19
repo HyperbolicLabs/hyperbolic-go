@@ -35,7 +35,7 @@
       ],
       "gpuCount": 7,
       "gpuFormFactor": "pcie",
-      "gpuType": "b200",
+      "gpuType": "sample",
       "label": null,
       "managedCluster": null,
       "monitoringEnabled": true,

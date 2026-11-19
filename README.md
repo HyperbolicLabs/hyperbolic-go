@@ -81,7 +81,7 @@ func main() {
 ```go
 created, err := client.Rentals.Create(ctx, hyperbolic.CreateRentalParams{
 	RentalType: hyperbolic.RentalTypeVirtualMachine,
-	GPUType:    hyperbolic.Ptr(hyperbolic.GPUTypeH100),
+	GPUType:    hyperbolic.Ptr("h100"),
 	GPUCount:   1,
 	Region:     hyperbolic.Ptr("us-central-1"),
 	Label:      hyperbolic.Ptr("train-run-42"),

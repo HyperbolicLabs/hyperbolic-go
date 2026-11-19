@@ -29,7 +29,7 @@ import (
 	hyperbolic "github.com/HyperbolicLabs/hyperbolic-go"
 )
 
-func vm(gpuType hyperbolic.GPUType, gpus int, region, label string) hyperbolic.CreateRentalParams {
+func vm(gpuType string, gpus int, region, label string) hyperbolic.CreateRentalParams {
 	p := hyperbolic.CreateRentalParams{RentalType: hyperbolic.RentalTypeVirtualMachine, GPUType: &gpuType, GPUCount: gpus, Region: &region}
 	if label != "" {
 		p.Label = &label
@@ -38,7 +38,7 @@ func vm(gpuType hyperbolic.GPUType, gpus int, region, label string) hyperbolic.C
 }
 
 func h100x1(label string) hyperbolic.CreateRentalParams {
-	return vm(hyperbolic.GPUTypeH100, 1, "us-central-1", label)
+	return vm("h100", 1, "us-central-1", label)
 }
 
 // listAll lists every active rental through the client.
@@ -120,11 +120,11 @@ func TestCreateChecksOptionsAndBalance(t *testing.T) {
 	c := s.Client(t)
 	ctx := context.Background()
 
-	_, err := c.Rentals.Create(ctx, vm(hyperbolic.GPUTypeB200, 8, "us-central-1", ""))
+	_, err := c.Rentals.Create(ctx, vm("b200", 8, "us-central-1", ""))
 	if !hyperbolic.HasCode(err, hyperbolic.CodeFailedToCalculateCostPerHour) {
 		t.Errorf("no matching offering: err = %v", err)
 	}
-	ethernet := vm(hyperbolic.GPUTypeH100, 8, "us-central-1", "")
+	ethernet := vm("h100", 8, "us-central-1", "")
 	ethernet.NetworkType = hyperbolic.Ptr(hyperbolic.CreateRentalParamsNetworkTypeEthernet)
 	_, err = c.Rentals.Create(ctx, ethernet)
 	if !hyperbolic.HasCode(err, hyperbolic.CodeFailedToCalculateCostPerHour) {
@@ -157,20 +157,20 @@ func TestCreateChecksOptionsAndBalance(t *testing.T) {
 
 func TestSetRentalOptions(t *testing.T) {
 	s := NewServer(t)
-	s.SetRentalOptions(VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, Region: "eu-north-1", GPUType: hyperbolic.GPUTypeB200, GPUCount: 8, CostPerHourCents: 4800}))
+	s.SetRentalOptions(VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, Region: "eu-north-1", GPUType: "b200", GPUCount: 8, CostPerHourCents: 4800}))
 	opts, err := s.Client(t).Rentals.Options(context.Background())
 	if err != nil || len(opts) != 1 {
 		t.Fatalf("options = %+v, err %v", opts, err)
 	}
-	if o, err := opts[0].AsVirtualMachineOption(); err != nil || o.GPUType != hyperbolic.GPUTypeB200 || o.MachineType != hyperbolic.VirtualMachineOptionMachineTypeVirtualMachine {
+	if o, err := opts[0].AsVirtualMachineOption(); err != nil || o.GPUType != "b200" || o.MachineType != hyperbolic.VirtualMachineOptionMachineTypeVirtualMachine {
 		t.Fatalf("option = %+v, err %v", o, err)
 	}
 }
 
 func TestSetRentalStatusFillsInstances(t *testing.T) {
 	s := NewServer(t)
-	s.SetRentalOptions(VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, Region: "us-central-1", GPUType: hyperbolic.GPUTypeH100, GPUCount: 16, CostPerHourCents: 4400}))
-	created, err := s.Client(t).Rentals.Create(context.Background(), vm(hyperbolic.GPUTypeH100, 16, "us-central-1", ""))
+	s.SetRentalOptions(VirtualMachineOption(hyperbolic.VirtualMachineOption{Enabled: true, Region: "us-central-1", GPUType: "h100", GPUCount: 16, CostPerHourCents: 4400}))
+	created, err := s.Client(t).Rentals.Create(context.Background(), vm("h100", 16, "us-central-1", ""))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -221,7 +221,7 @@ func TestActiveRentalSummary(t *testing.T) {
 	s := NewServer(t)
 	ctx := context.Background()
 	c := s.Client(t)
-	for _, p := range []hyperbolic.CreateRentalParams{h100x1(""), h100x1(""), vm(hyperbolic.GPUTypeH100, 8, "us-central-1", "")} {
+	for _, p := range []hyperbolic.CreateRentalParams{h100x1(""), h100x1(""), vm("h100", 8, "us-central-1", "")} {
 		if _, err := c.Rentals.Create(ctx, p); err != nil {
 			t.Fatal(err)
 		}

@@ -34,7 +34,7 @@
     ],
     "gpuCount": 7,
     "gpuFormFactor": "pcie",
-    "gpuType": "b200",
+    "gpuType": "sample",
     "instances": [
       {
         "actualResources": {
@@ -103,6 +103,7 @@
     "region": "sample",
     "rentalId": "sample",
     "rentalType": "virtual-machine",
+    "spotInterruptAt": "2026-10-21T07:00:00Z",
     "sshEndpoints": [
       {
         "host": "sample",

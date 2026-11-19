@@ -22,6 +22,12 @@ actions:
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.totalAvailable"
     update:
       type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.spotAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.spotNoticeSeconds"
+    update:
+      type: integer
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.nodes.items.properties.gpuCount"
     update:
       type: integer
@@ -38,6 +44,12 @@ actions:
     update:
       type: integer
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.totalAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.spotAvailable"
+    update:
+      type: integer
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.spotNoticeSeconds"
     update:
       type: integer
   - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.nodes.items.properties.gpuCount"
@@ -257,4 +269,23 @@ actions:
   - target: "$.components.schemas.RentalWithStatus.properties.region.enum"
     remove: true
   - target: "$.components.schemas.HistoricalRental.properties.region.enum"
+    remove: true
+  # GPU types are closed enums. Like regions, they are added often, so the
+  # SDK takes and returns any string rather than needing a release for each
+  # new one. Rental options list the types an account can rent.
+  - target: "$.paths['/v2/on-demand/rentals'].post.requestBody.content['application/json'].schema.properties.gpuType.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[0].properties.gpuType.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rental-options'].get.responses['200'].content['application/json'].schema.items.oneOf[1].properties.gpuType.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/active'].get.parameters[2].schema.enum"
+    remove: true
+  - target: "$.paths['/v2/on-demand/rentals/history'].get.parameters[2].schema.enum"
+    remove: true
+  - target: "$.components.schemas.Rental.properties.gpuType.enum"
+    remove: true
+  - target: "$.components.schemas.RentalWithStatus.properties.gpuType.enum"
+    remove: true
+  - target: "$.components.schemas.HistoricalRental.properties.gpuType.enum"
     remove: true
