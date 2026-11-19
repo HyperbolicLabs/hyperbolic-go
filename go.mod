@@ -1,10 +1,10 @@
 module github.com/HyperbolicLabs/hyperbolic-go
 
-go 1.24.0
+go 1.26.0
 
 require (
 	github.com/oapi-codegen/nullable v1.2.0
-	github.com/oapi-codegen/runtime v1.7.0
+	github.com/oapi-codegen/runtime v1.9.0
 )
 
 require (
