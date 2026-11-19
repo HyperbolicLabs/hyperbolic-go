@@ -7,6 +7,7 @@ What the SDK is generated from.
 | `openapi.json` | A pinned copy of the published spec, https://api.hyperbolic.ai/v2/openapi.json, indented so changes read as diffs. | `make spec-sync` and the daily sync job. Never by hand. |
 | `overlay.yaml` | An [OpenAPI Overlay](https://spec.openapis.org/overlay/v1.0.0) with fixes the published spec does not have yet. | By hand, one group per problem below. |
 | `sdk.yaml` | The SDK's surface: the operations it exposes, the Go name of each, whether it is safe to repeat, how it paginates, and Go names for the enums and unions the spec repeats inline. | By hand. |
+| `oasdiff-severity.txt` | The spec changes that the API changes check reports as warnings instead of failing on: a value added to a response enum, and the `oneOf` change oasdiff reports when that enum is inside a union variant. A new variant still fails generation, because `sdk.yaml` names each union's variants. | By hand. |
 
 `make generate` applies the overlay, checks the spec against `sdk.yaml`, and writes the following files.
 
@@ -23,8 +24,7 @@ A daily job runs `make spec-sync`, which pulls the spec and regenerates. It open
 - A new operation fails generation until `sdk.yaml` gives it a service, a method name and whether it is safe to repeat. The name becomes public API, so choose it deliberately.
 - A deprecated operation fails generation while `sdk.yaml` still lists it. Removing it from `sdk.yaml` is a breaking change for the SDK.
 - A breaking change fails the API changes check. Merging it needs the `breaking-api-change` label and a description of what users must change. Before 1.0 it ships in the next minor version.
-- A new region or GPU type also fails the API changes check, because the published spec lists both as closed enums. The SDK reads them as plain strings (fix 3 below), so nothing changes for Go users. Label the pull request and say so in its description.
-- A new field typed `number` generates as a float. If it holds a whole number, such as a count or a number of seconds, add it to fix 1 below before it ships, because changing its type later breaks the Go API.
+- A value added to a response enum is listed as a warning and doesn't fail the API changes check. Go decodes values it doesn't know, so nothing breaks for Go users. Regions and GPU types are plain strings in the SDK (fix 3 below), so a new one changes no Go code. If the SDK names the enum, such as `RentalStatus`, the sync adds a constant for the new value.
 - An overlay action that no longer matches fails generation. Usually the spec now carries the fix, so delete the action and its row below.
 
 ## Adding an operation
