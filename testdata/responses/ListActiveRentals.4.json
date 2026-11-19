@@ -87,6 +87,7 @@
       "region": "sample",
       "rentalId": "sample",
       "rentalType": "bare-metal",
+      "spotInterruptAt": null,
       "sshEndpoints": [
         {
           "host": "sample",

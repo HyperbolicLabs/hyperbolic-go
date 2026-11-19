@@ -612,6 +612,7 @@
                       "h100",
                       "h200",
                       "b200",
+                      "b300",
                       "rtx-6000-pro"
                     ]
                   },
@@ -880,6 +881,8 @@
                           "us-southeast-3",
                           "eu-west-5",
                           "jp-east-2",
+                          "us-west-1",
+                          "us-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -905,6 +908,7 @@
                       "h100",
                       "h200",
                       "b200",
+                      "b300",
                       "rtx-6000-pro"
                     ]
                   },
@@ -1353,6 +1357,8 @@
                           "us-southeast-3",
                           "eu-west-5",
                           "jp-east-2",
+                          "us-west-1",
+                          "us-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -1607,6 +1613,8 @@
                       "us-southeast-3",
                       "eu-west-5",
                       "jp-east-2",
+                      "us-west-1",
+                      "us-east-4",
                       "sim-1",
                       "us-east-3"
                     ]
@@ -1618,6 +1626,7 @@
                       "h100",
                       "h200",
                       "b200",
+                      "b300",
                       "rtx-6000-pro"
                     ]
                   },
@@ -2260,6 +2269,7 @@
                 "h100",
                 "h200",
                 "b200",
+                "b300",
                 "rtx-6000-pro"
               ]
             }
@@ -2295,6 +2305,8 @@
                 "us-southeast-3",
                 "eu-west-5",
                 "jp-east-2",
+                "us-west-1",
+                "us-east-4",
                 "sim-1",
                 "us-east-3",
                 "uk-central-3",
@@ -2459,6 +2471,7 @@
                 "h100",
                 "h200",
                 "b200",
+                "b300",
                 "rtx-6000-pro"
               ]
             }
@@ -2494,6 +2507,8 @@
                 "us-southeast-3",
                 "eu-west-5",
                 "jp-east-2",
+                "us-west-1",
+                "us-east-4",
                 "sim-1",
                 "us-east-3",
                 "uk-central-3",
@@ -2660,6 +2675,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
+                                  "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -2696,6 +2713,7 @@
                               "h100",
                               "h200",
                               "b200",
+                              "b300",
                               "rtx-6000-pro"
                             ]
                           },
@@ -2723,6 +2741,18 @@
                           },
                           "totalAvailable": {
                             "type": "number"
+                          },
+                          "spotAvailable": {
+                            "description": "GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.",
+                            "type": "number"
+                          },
+                          "spotNoticeSeconds": {
+                            "description": "The shortest notice a new spot rental of this option would get before an interruption.",
+                            "type": "number"
+                          },
+                          "spotOnly": {
+                            "description": "Whether this option can only be rented on the spot term.",
+                            "type": "boolean"
                           },
                           "machineType": {
                             "type": "string",
@@ -2815,6 +2845,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
+                                  "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -2851,6 +2883,7 @@
                               "h100",
                               "h200",
                               "b200",
+                              "b300",
                               "rtx-6000-pro"
                             ]
                           },
@@ -2878,6 +2911,18 @@
                           },
                           "totalAvailable": {
                             "type": "number"
+                          },
+                          "spotAvailable": {
+                            "description": "GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.",
+                            "type": "number"
+                          },
+                          "spotNoticeSeconds": {
+                            "description": "The shortest notice a new spot rental of this option would get before an interruption.",
+                            "type": "number"
+                          },
+                          "spotOnly": {
+                            "description": "Whether this option can only be rented on the spot term.",
+                            "type": "boolean"
                           },
                           "machineType": {
                             "type": "string",
@@ -3363,7 +3408,7 @@
       "post": {
         "operationId": "ondemand-rebootRentalInstance",
         "summary": "Reboot a single instance within a rental",
-        "description": "Reboots one instance. Call it only for an instance whose `instances[].supportsReboot` is true. Depending on the instance, this is either a warm in-place guest reset or a hard power cycle. Disk contents are preserved either way; unsaved in-memory work is lost. Reports INVALID_INSTANCE_REF for an `instanceRef` outside this rental, REBOOT_NOT_SUPPORTED for a rental that does not support reboot, and REBOOT_ALREADY_IN_PROGRESS while one is in flight.",
+        "description": "Reboots one instance. Call it only for an instance whose `instances[].supportsReboot` is true. Depending on the instance, this is either a warm in-place guest reset or a hard power cycle. Disk contents are preserved either way; unsaved in-memory work is lost. `instanceRef` is an entry of the rental's `instances[].instanceRef` (`<rentalId>-<node index>`). Reports INVALID_INSTANCE_REF for an `instanceRef` outside this rental, REBOOT_NOT_SUPPORTED for a rental that does not support reboot, REBOOT_ALREADY_IN_PROGRESS while one is in flight, and INSTANCE_NOT_READY_FOR_REBOOT when the instance is not running or has another operation in progress.",
         "tags": [
           "rentals"
         ],
@@ -6504,6 +6549,7 @@
                       "h100",
                       "h200",
                       "b200",
+                      "b300",
                       "rtx-6000-pro"
                     ]
                   },
@@ -7119,6 +7165,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
+                                  "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -7155,6 +7203,7 @@
                               "h100",
                               "h200",
                               "b200",
+                              "b300",
                               "rtx-6000-pro"
                             ]
                           },
@@ -7182,6 +7231,18 @@
                           },
                           "totalAvailable": {
                             "type": "number"
+                          },
+                          "spotAvailable": {
+                            "description": "GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.",
+                            "type": "number"
+                          },
+                          "spotNoticeSeconds": {
+                            "description": "The shortest notice a new spot rental of this option would get before an interruption.",
+                            "type": "number"
+                          },
+                          "spotOnly": {
+                            "description": "Whether this option can only be rented on the spot term.",
+                            "type": "boolean"
                           },
                           "machineType": {
                             "type": "string",
@@ -7274,6 +7335,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
+                                  "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -7310,6 +7373,7 @@
                               "h100",
                               "h200",
                               "b200",
+                              "b300",
                               "rtx-6000-pro"
                             ]
                           },
@@ -7337,6 +7401,18 @@
                           },
                           "totalAvailable": {
                             "type": "number"
+                          },
+                          "spotAvailable": {
+                            "description": "GPUs a new spot rental of this option can still claim, where the provider reports spot capacity.",
+                            "type": "number"
+                          },
+                          "spotNoticeSeconds": {
+                            "description": "The shortest notice a new spot rental of this option would get before an interruption.",
+                            "type": "number"
+                          },
+                          "spotOnly": {
+                            "description": "Whether this option can only be rented on the spot term.",
+                            "type": "boolean"
                           },
                           "machineType": {
                             "type": "string",
@@ -8086,6 +8162,8 @@
                           "us-southeast-3",
                           "eu-west-5",
                           "jp-east-2",
+                          "us-west-1",
+                          "us-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -8894,6 +8972,8 @@
                       "us-southeast-3",
                       "eu-west-5",
                       "jp-east-2",
+                      "us-west-1",
+                      "us-east-4",
                       "sim-1",
                       "us-east-3"
                     ]
@@ -8905,6 +8985,7 @@
                       "h100",
                       "h200",
                       "b200",
+                      "b300",
                       "rtx-6000-pro"
                     ]
                   },
@@ -9644,6 +9725,8 @@
               "us-southeast-3",
               "eu-west-5",
               "jp-east-2",
+              "us-west-1",
+              "us-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -9661,6 +9744,7 @@
               "h100",
               "h200",
               "b200",
+              "b300",
               "rtx-6000-pro"
             ]
           },
@@ -10343,6 +10427,8 @@
               "us-southeast-3",
               "eu-west-5",
               "jp-east-2",
+              "us-west-1",
+              "us-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -10360,6 +10446,7 @@
               "h100",
               "h200",
               "b200",
+              "b300",
               "rtx-6000-pro"
             ]
           },
@@ -10713,6 +10800,19 @@
               "boolean",
               "null"
             ]
+          },
+          "spotInterruptAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-01-31T12:00:00.000Z"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When a spot rental's scheduled interruption ends it: the capacity is needed back and the rental is terminated at this time. Null when no interruption is scheduled."
           }
         },
         "required": [
@@ -10751,7 +10851,8 @@
           "privateCluster",
           "managedCluster",
           "status",
-          "monitoringOptOut"
+          "monitoringOptOut",
+          "spotInterruptAt"
         ],
         "additionalProperties": false,
         "description": "A GPU rental with its live status."
@@ -10893,6 +10994,8 @@
                   "us-southeast-3",
                   "eu-west-5",
                   "jp-east-2",
+                  "us-west-1",
+                  "us-east-4",
                   "sim-1",
                   "us-east-3"
                 ]
@@ -10993,6 +11096,8 @@
                   "us-southeast-3",
                   "eu-west-5",
                   "jp-east-2",
+                  "us-west-1",
+                  "us-east-4",
                   "sim-1",
                   "us-east-3"
                 ]
@@ -11292,6 +11397,8 @@
               "us-southeast-3",
               "eu-west-5",
               "jp-east-2",
+              "us-west-1",
+              "us-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -11309,6 +11416,7 @@
               "h100",
               "h200",
               "b200",
+              "b300",
               "rtx-6000-pro"
             ]
           },
