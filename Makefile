@@ -1,6 +1,6 @@
 ## Tool versions. Bump them here, and CI reads the same versions.
 GOLANGCI_LINT_VERSION ?= v2.15.0
-GOVULNCHECK_VERSION ?= v1.9.0
+GOVULNCHECK_VERSION ?= v1.10.0
 
 # The published spec the SDK is generated from.
 SPEC_URL ?= https://api.hyperbolic.ai/v2/openapi.json
