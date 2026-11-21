@@ -1546,7 +1546,7 @@ type ReservationExtensionQuote struct {
 	CostPerHourCents float64                      `json:"costPerHourCents"`
 	Options          []ReservationExtensionOption `json:"options"`
 
-	// RequestedOption One term a reserved rental can be extended by.
+	// RequestedOption An extension of the requested `termPeriodDays`, priced. Only present when a length is passed.
 	RequestedOption *ReservationExtensionOption `json:"requestedOption,omitempty"`
 	ReservedUntil   time.Time                   `json:"reservedUntil"`
 }
@@ -1583,7 +1583,7 @@ type ReservedConversionQuote struct {
 	EstimatedUsageTailCents float64                    `json:"estimatedUsageTailCents"`
 	Options                 []ReservedConversionOption `json:"options"`
 
-	// RequestedOption One term an on-demand rental can be converted to.
+	// RequestedOption A quote for the rental conversion by `termPeriodDays`. Only present when `termPeriodDays` is passed.
 	RequestedOption *ReservedConversionOption `json:"requestedOption,omitempty"`
 }
 

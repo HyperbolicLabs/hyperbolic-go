@@ -141,7 +141,7 @@ func nameUnions(spec *openapi3.T, conf *sdkFile, ops []*openapi3.Operation) erro
 		if len(s.OneOf) != len(u.Variants) {
 			return fmt.Errorf("union %s has %d variants, sdk.yaml names %d", name, len(s.OneOf), len(u.Variants))
 		}
-		d := &openapi3.Discriminator{PropertyName: u.Discriminator, Mapping: openapi3.StringMap[openapi3.MappingRef]{}}
+		d := &openapi3.Discriminator{PropertyName: u.Discriminator, Mapping: map[string]openapi3.MappingRef{}}
 		for i, vname := range u.Variants {
 			v := s.OneOf[i]
 			if v.Ref == "" {
