@@ -35,7 +35,7 @@
       ],
       "gpuCount": 7,
       "gpuFormFactor": "sxm5",
-      "gpuType": "h100",
+      "gpuType": "sample",
       "instances": [
         {
           "actualResources": {
@@ -87,6 +87,7 @@
       "region": "sample",
       "rentalId": "sample",
       "rentalType": "virtual-machine",
+      "spotInterruptAt": null,
       "sshEndpoints": [
         {
           "host": "sample",

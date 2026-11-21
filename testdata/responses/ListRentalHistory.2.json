@@ -35,7 +35,7 @@
       ],
       "gpuCount": 7,
       "gpuFormFactor": "sxm5",
-      "gpuType": "h100",
+      "gpuType": "sample",
       "label": null,
       "managedCluster": null,
       "monitoringEnabled": true,

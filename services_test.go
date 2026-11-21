@@ -149,7 +149,7 @@ func TestListActiveSendsQueryAndDecodesPage(t *testing.T) {
 		t.Errorf("query = %q", q)
 	}
 	r := page.Items[0]
-	if r.Status != hyperbolic.RentalStatusRunning || r.GPUType != hyperbolic.GPUTypeH100 || r.SSHEndpoints[0].Port != 22 {
+	if r.Status != hyperbolic.RentalStatusRunning || r.GPUType != "h100" || r.SSHEndpoints[0].Port != 22 {
 		t.Errorf("rental = %+v", r)
 	}
 	if label, err := r.Label.Get(); err != nil || label != "train-run-42" {
@@ -250,7 +250,7 @@ func TestCreateSendsOnlyWhatIsSet(t *testing.T) {
 		"POST " + pathRentals: {200, `{"rentalId":"rnt_e","label":"train-run-42","region":"us-central-1","gpuType":"h100","gpuCount":8,"rentalType":"virtual-machine"}`},
 	})
 	created, err := c.Rentals.Create(context.Background(), hyperbolic.CreateRentalParams{
-		RentalType: hyperbolic.RentalTypeVirtualMachine, GPUType: hyperbolic.Ptr(hyperbolic.GPUTypeH100), GPUCount: 8,
+		RentalType: hyperbolic.RentalTypeVirtualMachine, GPUType: hyperbolic.Ptr("h100"), GPUCount: 8,
 		Region: hyperbolic.Ptr("us-central-1"), Label: hyperbolic.Ptr("train-run-42"), CustomPorts: &[]int{8080},
 	})
 	if err != nil || created.RentalID != "rnt_e" {

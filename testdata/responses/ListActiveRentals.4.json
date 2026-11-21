@@ -35,7 +35,7 @@
       ],
       "gpuCount": 7,
       "gpuFormFactor": "sxm6",
-      "gpuType": "h200",
+      "gpuType": "sample",
       "instances": [
         {
           "actualResources": {
@@ -87,6 +87,7 @@
       "region": "sample",
       "rentalId": "sample",
       "rentalType": "bare-metal",
+      "spotInterruptAt": null,
       "sshEndpoints": [
         {
           "host": "sample",

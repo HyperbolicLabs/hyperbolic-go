@@ -1,6 +1,6 @@
 ## Tool versions. Bump them here, and CI reads the same versions.
 GOLANGCI_LINT_VERSION ?= v2.15.0
-GOVULNCHECK_VERSION ?= v1.9.0
+GOVULNCHECK_VERSION ?= v1.10.0
 
 # The published spec the SDK is generated from.
 SPEC_URL ?= https://api.hyperbolic.ai/v2/openapi.json
@@ -65,14 +65,18 @@ spec-sync: ## Pull the published spec into openapi/openapi.json and regenerate.
 	go -C internal/gen run . -root $(CURDIR) -sync $(SPEC_URL)
 
 .PHONY: spec-diff
+# openapi/oasdiff-severity.txt lowers the changes Go clients tolerate, such
+# as a new region in a response, from errors to warnings.
 spec-diff: ## List how the spec changed since BASE, and fail on changes that break API clients.
 	@mkdir -p $(LOCALBIN)
 	@if ! git cat-file -e $(BASE):openapi/openapi.json 2>/dev/null; then \
 		echo "No spec at $(BASE); nothing to compare."; \
 	else \
 		git show $(BASE):openapi/openapi.json > $(LOCALBIN)/openapi.base.json && \
-		$(TOOL) oasdiff changelog $(LOCALBIN)/openapi.base.json $(CURDIR)/openapi/openapi.json && \
-		$(TOOL) oasdiff breaking $(LOCALBIN)/openapi.base.json $(CURDIR)/openapi/openapi.json --fail-on ERR; \
+		$(TOOL) oasdiff changelog $(LOCALBIN)/openapi.base.json $(CURDIR)/openapi/openapi.json \
+			--severity-levels $(CURDIR)/openapi/oasdiff-severity.txt && \
+		$(TOOL) oasdiff breaking $(LOCALBIN)/openapi.base.json $(CURDIR)/openapi/openapi.json --fail-on ERR \
+			--severity-levels $(CURDIR)/openapi/oasdiff-severity.txt; \
 	fi
 
 ##@ Release
