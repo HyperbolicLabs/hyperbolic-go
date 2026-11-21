@@ -881,8 +881,8 @@
                           "us-southeast-3",
                           "eu-west-5",
                           "jp-east-2",
-                          "ap-south-1",
                           "us-west-1",
+                          "us-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -1357,8 +1357,8 @@
                           "us-southeast-3",
                           "eu-west-5",
                           "jp-east-2",
-                          "ap-south-1",
                           "us-west-1",
+                          "us-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -1613,8 +1613,8 @@
                       "us-southeast-3",
                       "eu-west-5",
                       "jp-east-2",
-                      "ap-south-1",
                       "us-west-1",
+                      "us-east-4",
                       "sim-1",
                       "us-east-3"
                     ]
@@ -2305,8 +2305,8 @@
                 "us-southeast-3",
                 "eu-west-5",
                 "jp-east-2",
-                "ap-south-1",
                 "us-west-1",
+                "us-east-4",
                 "sim-1",
                 "us-east-3",
                 "uk-central-3",
@@ -2507,8 +2507,8 @@
                 "us-southeast-3",
                 "eu-west-5",
                 "jp-east-2",
-                "ap-south-1",
                 "us-west-1",
+                "us-east-4",
                 "sim-1",
                 "us-east-3",
                 "uk-central-3",
@@ -2675,8 +2675,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
-                                  "ap-south-1",
                                   "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -2845,8 +2845,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
-                                  "ap-south-1",
                                   "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -7165,8 +7165,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
-                                  "ap-south-1",
                                   "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -7335,8 +7335,8 @@
                                   "us-southeast-3",
                                   "eu-west-5",
                                   "jp-east-2",
-                                  "ap-south-1",
                                   "us-west-1",
+                                  "us-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -8162,8 +8162,8 @@
                           "us-southeast-3",
                           "eu-west-5",
                           "jp-east-2",
-                          "ap-south-1",
                           "us-west-1",
+                          "us-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -8972,8 +8972,8 @@
                       "us-southeast-3",
                       "eu-west-5",
                       "jp-east-2",
-                      "ap-south-1",
                       "us-west-1",
+                      "us-east-4",
                       "sim-1",
                       "us-east-3"
                     ]
@@ -9725,8 +9725,8 @@
               "us-southeast-3",
               "eu-west-5",
               "jp-east-2",
-              "ap-south-1",
               "us-west-1",
+              "us-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -10427,8 +10427,8 @@
               "us-southeast-3",
               "eu-west-5",
               "jp-east-2",
-              "ap-south-1",
               "us-west-1",
+              "us-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -10994,8 +10994,8 @@
                   "us-southeast-3",
                   "eu-west-5",
                   "jp-east-2",
-                  "ap-south-1",
                   "us-west-1",
+                  "us-east-4",
                   "sim-1",
                   "us-east-3"
                 ]
@@ -11096,8 +11096,8 @@
                   "us-southeast-3",
                   "eu-west-5",
                   "jp-east-2",
-                  "ap-south-1",
                   "us-west-1",
+                  "us-east-4",
                   "sim-1",
                   "us-east-3"
                 ]
@@ -11397,8 +11397,8 @@
               "us-southeast-3",
               "eu-west-5",
               "jp-east-2",
-              "ap-south-1",
               "us-west-1",
+              "us-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
