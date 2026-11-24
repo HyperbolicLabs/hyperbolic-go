@@ -737,6 +737,8 @@ func (e ExistingStorageVolumeIsNew) Valid() bool {
 // ExtendReservedRentalParams defines model for ExtendReservedRentalParams.
 type ExtendReservedRentalParams struct {
 	// CurrentReservedUntil The reservation's current end date: the reservation extension quote's top-level `reservedUntil`, not the option's `newReservedUntil`. The extension is rejected if the end date has changed since the quote.
+	//
+	// Example: 2025-01-31T12:00:00.000Z
 	CurrentReservedUntil    time.Time `json:"currentReservedUntil"`
 	ExpectedTotalPriceCents int       `json:"expectedTotalPriceCents"`
 	RentalID                string    `json:"rentalId"`
@@ -774,7 +776,9 @@ type HistoricalRental struct {
 	AttachedStorage           []AttachedStorage       `json:"attachedStorage"`
 	ConnectionType            ConnectionType          `json:"connectionType"`
 	ConvertToOnDemandOnExpiry nullable.Nullable[bool] `json:"convertToOnDemandOnExpiry"`
-	CreatedAt                 time.Time               `json:"createdAt"`
+
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
+	CreatedAt time.Time `json:"createdAt"`
 
 	// CreatedBy The user who created a rental.
 	CreatedBy               RentalCreator                        `json:"createdBy"`
@@ -804,11 +808,13 @@ type HistoricalRental struct {
 	SupportsMultipleSSHKeys bool                                 `json:"supportsMultipleSshKeys"`
 	SupportsPortForwarding  bool                                 `json:"supportsPortForwarding"`
 	SupportsSSHKeyUpdates   bool                                 `json:"supportsSshKeyUpdates"`
-	TerminatedAt            time.Time                            `json:"terminatedAt"`
-	TerminationReason       nullable.Nullable[string]            `json:"terminationReason"`
-	TotalCost               float64                              `json:"totalCost"`
-	UpdatedAt               nullable.Nullable[time.Time]         `json:"updatedAt"`
-	UserID                  string                               `json:"userId"`
+
+	// TerminatedAt Example: 2025-01-31T12:00:00.000Z
+	TerminatedAt      time.Time                    `json:"terminatedAt"`
+	TerminationReason nullable.Nullable[string]    `json:"terminationReason"`
+	TotalCost         float64                      `json:"totalCost"`
+	UpdatedAt         nullable.Nullable[time.Time] `json:"updatedAt"`
+	UserID            string                       `json:"userId"`
 }
 
 // ManagedClusterRef The managed Kubernetes cluster a rental is a node pool of.
@@ -850,8 +856,10 @@ func (e NewStorageVolumeIsNew) Valid() bool {
 
 // OnDemandTerm defines model for OnDemandTerm.
 type OnDemandTerm struct {
-	CostPerHour         float64                `json:"costPerHour"`
-	DiscountPercentage  nullable.Nullable[any] `json:"discountPercentage"`
+	CostPerHour        float64                `json:"costPerHour"`
+	DiscountPercentage nullable.Nullable[any] `json:"discountPercentage"`
+
+	// EffectiveAt Example: 2025-01-31T12:00:00.000Z
 	EffectiveAt         time.Time              `json:"effectiveAt"`
 	OriginalCostPerHour nullable.Nullable[any] `json:"originalCostPerHour"`
 	ReservationEndsAt   nullable.Nullable[any] `json:"reservationEndsAt"`
@@ -886,8 +894,10 @@ type PortMapping struct {
 
 // PrivateCloudTerm defines model for PrivateCloudTerm.
 type PrivateCloudTerm struct {
-	CostPerHour         float64                  `json:"costPerHour"`
-	DiscountPercentage  nullable.Nullable[any]   `json:"discountPercentage"`
+	CostPerHour        float64                `json:"costPerHour"`
+	DiscountPercentage nullable.Nullable[any] `json:"discountPercentage"`
+
+	// EffectiveAt Example: 2025-01-31T12:00:00.000Z
 	EffectiveAt         time.Time                `json:"effectiveAt"`
 	OriginalCostPerHour nullable.Nullable[any]   `json:"originalCostPerHour"`
 	ReservationEndsAt   nullable.Nullable[any]   `json:"reservationEndsAt"`
@@ -917,7 +927,7 @@ func (e PrivateCloudTermTermType) Valid() bool {
 // PrivateCluster The topology of a dedicated private cluster.
 type PrivateCluster struct {
 	GPUModel nullable.Nullable[string]  `json:"gpuModel"`
-	Handover map[string]interface{}     `json:"handover"`
+	Handover map[string]any             `json:"handover"`
 	Location nullable.Nullable[string]  `json:"location"`
 	Nodes    []PrivateClusterNode       `json:"nodes"`
 	SSHPort  nullable.Nullable[float64] `json:"sshPort"`
@@ -967,7 +977,9 @@ type Rental struct {
 	AttachedStorage           []AttachedStorage       `json:"attachedStorage"`
 	ConnectionType            ConnectionType          `json:"connectionType"`
 	ConvertToOnDemandOnExpiry nullable.Nullable[bool] `json:"convertToOnDemandOnExpiry"`
-	CreatedAt                 time.Time               `json:"createdAt"`
+
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
+	CreatedAt time.Time `json:"createdAt"`
 
 	// CreatedBy The user who created a rental.
 	CreatedBy               RentalCreator                        `json:"createdBy"`
@@ -1055,13 +1067,13 @@ type RentalLookup struct {
 // AsActiveRentalLookup returns the union data inside the RentalLookup as a ActiveRentalLookup
 func (t RentalLookup) AsActiveRentalLookup() (ActiveRentalLookup, error) {
 	var body ActiveRentalLookup
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromActiveRentalLookup overwrites any union data inside the RentalLookup as the provided ActiveRentalLookup
 func (t *RentalLookup) FromActiveRentalLookup(v ActiveRentalLookup) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1072,7 +1084,7 @@ func (t *RentalLookup) FromActiveRentalLookup(v ActiveRentalLookup) error {
 
 // MergeActiveRentalLookup performs a merge with any union data inside the RentalLookup, using the provided ActiveRentalLookup
 func (t *RentalLookup) MergeActiveRentalLookup(v ActiveRentalLookup) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1089,13 +1101,13 @@ func (t *RentalLookup) MergeActiveRentalLookup(v ActiveRentalLookup) error {
 // AsTerminatedRentalLookup returns the union data inside the RentalLookup as a TerminatedRentalLookup
 func (t RentalLookup) AsTerminatedRentalLookup() (TerminatedRentalLookup, error) {
 	var body TerminatedRentalLookup
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromTerminatedRentalLookup overwrites any union data inside the RentalLookup as the provided TerminatedRentalLookup
 func (t *RentalLookup) FromTerminatedRentalLookup(v TerminatedRentalLookup) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1106,7 +1118,7 @@ func (t *RentalLookup) FromTerminatedRentalLookup(v TerminatedRentalLookup) erro
 
 // MergeTerminatedRentalLookup performs a merge with any union data inside the RentalLookup, using the provided TerminatedRentalLookup
 func (t *RentalLookup) MergeTerminatedRentalLookup(v TerminatedRentalLookup) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1124,11 +1136,11 @@ func (t RentalLookup) Discriminator() (string, error) {
 	var discriminator struct {
 		Discriminator string `json:"state"`
 	}
-	err := json.Unmarshal(t.union, &discriminator)
+	err := runtime.JSONUnmarshal(t.union, &discriminator)
 	return discriminator.Discriminator, err
 }
 
-func (t RentalLookup) ValueByDiscriminator() (interface{}, error) {
+func (t RentalLookup) ValueByDiscriminator() (any, error) {
 	discriminator, err := t.Discriminator()
 	if err != nil {
 		return nil, err
@@ -1171,13 +1183,13 @@ type RentalOption struct {
 // AsVirtualMachineOption returns the union data inside the RentalOption as a VirtualMachineOption
 func (t RentalOption) AsVirtualMachineOption() (VirtualMachineOption, error) {
 	var body VirtualMachineOption
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromVirtualMachineOption overwrites any union data inside the RentalOption as the provided VirtualMachineOption
 func (t *RentalOption) FromVirtualMachineOption(v VirtualMachineOption) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1188,7 +1200,7 @@ func (t *RentalOption) FromVirtualMachineOption(v VirtualMachineOption) error {
 
 // MergeVirtualMachineOption performs a merge with any union data inside the RentalOption, using the provided VirtualMachineOption
 func (t *RentalOption) MergeVirtualMachineOption(v VirtualMachineOption) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1205,13 +1217,13 @@ func (t *RentalOption) MergeVirtualMachineOption(v VirtualMachineOption) error {
 // AsBareMetalOption returns the union data inside the RentalOption as a BareMetalOption
 func (t RentalOption) AsBareMetalOption() (BareMetalOption, error) {
 	var body BareMetalOption
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromBareMetalOption overwrites any union data inside the RentalOption as the provided BareMetalOption
 func (t *RentalOption) FromBareMetalOption(v BareMetalOption) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1222,7 +1234,7 @@ func (t *RentalOption) FromBareMetalOption(v BareMetalOption) error {
 
 // MergeBareMetalOption performs a merge with any union data inside the RentalOption, using the provided BareMetalOption
 func (t *RentalOption) MergeBareMetalOption(v BareMetalOption) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1240,11 +1252,11 @@ func (t RentalOption) Discriminator() (string, error) {
 	var discriminator struct {
 		Discriminator string `json:"machineType"`
 	}
-	err := json.Unmarshal(t.union, &discriminator)
+	err := runtime.JSONUnmarshal(t.union, &discriminator)
 	return discriminator.Discriminator, err
 }
 
-func (t RentalOption) ValueByDiscriminator() (interface{}, error) {
+func (t RentalOption) ValueByDiscriminator() (any, error) {
 	discriminator, err := t.Discriminator()
 	if err != nil {
 		return nil, err
@@ -1313,13 +1325,13 @@ type RentalTerm struct {
 // AsOnDemandTerm returns the union data inside the RentalTerm as a OnDemandTerm
 func (t RentalTerm) AsOnDemandTerm() (OnDemandTerm, error) {
 	var body OnDemandTerm
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromOnDemandTerm overwrites any union data inside the RentalTerm as the provided OnDemandTerm
 func (t *RentalTerm) FromOnDemandTerm(v OnDemandTerm) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1330,7 +1342,7 @@ func (t *RentalTerm) FromOnDemandTerm(v OnDemandTerm) error {
 
 // MergeOnDemandTerm performs a merge with any union data inside the RentalTerm, using the provided OnDemandTerm
 func (t *RentalTerm) MergeOnDemandTerm(v OnDemandTerm) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1347,13 +1359,13 @@ func (t *RentalTerm) MergeOnDemandTerm(v OnDemandTerm) error {
 // AsReservedTerm returns the union data inside the RentalTerm as a ReservedTerm
 func (t RentalTerm) AsReservedTerm() (ReservedTerm, error) {
 	var body ReservedTerm
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromReservedTerm overwrites any union data inside the RentalTerm as the provided ReservedTerm
 func (t *RentalTerm) FromReservedTerm(v ReservedTerm) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1364,7 +1376,7 @@ func (t *RentalTerm) FromReservedTerm(v ReservedTerm) error {
 
 // MergeReservedTerm performs a merge with any union data inside the RentalTerm, using the provided ReservedTerm
 func (t *RentalTerm) MergeReservedTerm(v ReservedTerm) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1381,13 +1393,13 @@ func (t *RentalTerm) MergeReservedTerm(v ReservedTerm) error {
 // AsPrivateCloudTerm returns the union data inside the RentalTerm as a PrivateCloudTerm
 func (t RentalTerm) AsPrivateCloudTerm() (PrivateCloudTerm, error) {
 	var body PrivateCloudTerm
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromPrivateCloudTerm overwrites any union data inside the RentalTerm as the provided PrivateCloudTerm
 func (t *RentalTerm) FromPrivateCloudTerm(v PrivateCloudTerm) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1398,7 +1410,7 @@ func (t *RentalTerm) FromPrivateCloudTerm(v PrivateCloudTerm) error {
 
 // MergePrivateCloudTerm performs a merge with any union data inside the RentalTerm, using the provided PrivateCloudTerm
 func (t *RentalTerm) MergePrivateCloudTerm(v PrivateCloudTerm) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1416,11 +1428,11 @@ func (t RentalTerm) Discriminator() (string, error) {
 	var discriminator struct {
 		Discriminator string `json:"termType"`
 	}
-	err := json.Unmarshal(t.union, &discriminator)
+	err := runtime.JSONUnmarshal(t.union, &discriminator)
 	return discriminator.Discriminator, err
 }
 
-func (t RentalTerm) ValueByDiscriminator() (interface{}, error) {
+func (t RentalTerm) ValueByDiscriminator() (any, error) {
 	discriminator, err := t.Discriminator()
 	if err != nil {
 		return nil, err
@@ -1485,7 +1497,9 @@ type RentalWithStatus struct {
 	AttachedStorage           []AttachedStorage       `json:"attachedStorage"`
 	ConnectionType            ConnectionType          `json:"connectionType"`
 	ConvertToOnDemandOnExpiry nullable.Nullable[bool] `json:"convertToOnDemandOnExpiry"`
-	CreatedAt                 time.Time               `json:"createdAt"`
+
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
+	CreatedAt time.Time `json:"createdAt"`
 
 	// CreatedBy The user who created a rental.
 	CreatedBy         RentalCreator                        `json:"createdBy"`
@@ -1535,10 +1549,12 @@ type RequestReservationParams struct {
 
 // ReservationExtensionOption One term a reserved rental can be extended by.
 type ReservationExtensionOption struct {
-	DiscountPercentage float64   `json:"discountPercentage"`
-	NewReservedUntil   time.Time `json:"newReservedUntil"`
-	TermPeriodDays     int       `json:"termPeriodDays"`
-	TotalPriceCents    float64   `json:"totalPriceCents"`
+	DiscountPercentage float64 `json:"discountPercentage"`
+
+	// NewReservedUntil Example: 2025-01-31T12:00:00.000Z
+	NewReservedUntil time.Time `json:"newReservedUntil"`
+	TermPeriodDays   int       `json:"termPeriodDays"`
+	TotalPriceCents  float64   `json:"totalPriceCents"`
 }
 
 // ReservationExtensionQuote What extending a reserved rental would cost, per term.
@@ -1548,7 +1564,9 @@ type ReservationExtensionQuote struct {
 
 	// RequestedOption An extension of the requested `termPeriodDays`, priced. Only present when a length is passed.
 	RequestedOption *ReservationExtensionOption `json:"requestedOption,omitempty"`
-	ReservedUntil   time.Time                   `json:"reservedUntil"`
+
+	// ReservedUntil Example: 2025-01-31T12:00:00.000Z
+	ReservedUntil time.Time `json:"reservedUntil"`
 }
 
 // ReservationRequest defines model for ReservationRequest.
@@ -1589,23 +1607,29 @@ type ReservedConversionQuote struct {
 
 // ReservedRentalConversion An on-demand rental converted to reserved, and what it cost.
 type ReservedRentalConversion struct {
-	AmountChargedCents float64   `json:"amountChargedCents"`
-	RentalID           string    `json:"rentalId"`
-	ReservedUntil      time.Time `json:"reservedUntil"`
-	UsageTailCents     float64   `json:"usageTailCents"`
+	AmountChargedCents float64 `json:"amountChargedCents"`
+	RentalID           string  `json:"rentalId"`
+
+	// ReservedUntil Example: 2025-01-31T12:00:00.000Z
+	ReservedUntil  time.Time `json:"reservedUntil"`
+	UsageTailCents float64   `json:"usageTailCents"`
 }
 
 // ReservedRentalExtension A reserved rental's new end, and what extending it cost.
 type ReservedRentalExtension struct {
-	AmountChargedCents float64   `json:"amountChargedCents"`
-	RentalID           string    `json:"rentalId"`
-	ReservedUntil      time.Time `json:"reservedUntil"`
+	AmountChargedCents float64 `json:"amountChargedCents"`
+	RentalID           string  `json:"rentalId"`
+
+	// ReservedUntil Example: 2025-01-31T12:00:00.000Z
+	ReservedUntil time.Time `json:"reservedUntil"`
 }
 
 // ReservedTerm defines model for ReservedTerm.
 type ReservedTerm struct {
-	CostPerHour         float64                      `json:"costPerHour"`
-	DiscountPercentage  float64                      `json:"discountPercentage"`
+	CostPerHour        float64 `json:"costPerHour"`
+	DiscountPercentage float64 `json:"discountPercentage"`
+
+	// EffectiveAt Example: 2025-01-31T12:00:00.000Z
 	EffectiveAt         time.Time                    `json:"effectiveAt"`
 	OriginalCostPerHour float64                      `json:"originalCostPerHour"`
 	ReservationEndsAt   nullable.Nullable[time.Time] `json:"reservationEndsAt"`
@@ -1654,20 +1678,20 @@ type StorageVolumeChoice struct {
 // AsExistingStorageVolume returns the union data inside the StorageVolumeChoice as a ExistingStorageVolume
 func (t StorageVolumeChoice) AsExistingStorageVolume() (ExistingStorageVolume, error) {
 	var body ExistingStorageVolume
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromExistingStorageVolume overwrites any union data inside the StorageVolumeChoice as the provided ExistingStorageVolume
 func (t *StorageVolumeChoice) FromExistingStorageVolume(v ExistingStorageVolume) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	t.union = b
 	return err
 }
 
 // MergeExistingStorageVolume performs a merge with any union data inside the StorageVolumeChoice, using the provided ExistingStorageVolume
 func (t *StorageVolumeChoice) MergeExistingStorageVolume(v ExistingStorageVolume) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}
@@ -1680,20 +1704,20 @@ func (t *StorageVolumeChoice) MergeExistingStorageVolume(v ExistingStorageVolume
 // AsNewStorageVolume returns the union data inside the StorageVolumeChoice as a NewStorageVolume
 func (t StorageVolumeChoice) AsNewStorageVolume() (NewStorageVolume, error) {
 	var body NewStorageVolume
-	err := json.Unmarshal(t.union, &body)
+	err := runtime.JSONUnmarshal(t.union, &body)
 	return body, err
 }
 
 // FromNewStorageVolume overwrites any union data inside the StorageVolumeChoice as the provided NewStorageVolume
 func (t *StorageVolumeChoice) FromNewStorageVolume(v NewStorageVolume) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	t.union = b
 	return err
 }
 
 // MergeNewStorageVolume performs a merge with any union data inside the StorageVolumeChoice, using the provided NewStorageVolume
 func (t *StorageVolumeChoice) MergeNewStorageVolume(v NewStorageVolume) error {
-	b, err := json.Marshal(v)
+	b, err := runtime.JSONMarshal(v)
 	if err != nil {
 		return err
 	}

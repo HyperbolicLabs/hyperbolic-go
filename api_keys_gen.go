@@ -44,6 +44,7 @@ func (s *APIKeysService) List(ctx context.Context) ([]APIKey, error) {
 
 // APIKey An issued API key. The secret itself is only ever returned at creation.
 type APIKey struct {
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
 	CreatedAt time.Time                 `json:"createdAt"`
 	Last4     string                    `json:"last4"`
 	OrgID     nullable.Nullable[string] `json:"orgId"`
