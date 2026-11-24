@@ -883,6 +883,7 @@
                           "jp-east-2",
                           "us-west-1",
                           "us-east-4",
+                          "ca-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -1359,6 +1360,7 @@
                           "jp-east-2",
                           "us-west-1",
                           "us-east-4",
+                          "ca-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -1615,6 +1617,7 @@
                       "jp-east-2",
                       "us-west-1",
                       "us-east-4",
+                      "ca-east-4",
                       "sim-1",
                       "us-east-3"
                     ]
@@ -2307,6 +2310,7 @@
                 "jp-east-2",
                 "us-west-1",
                 "us-east-4",
+                "ca-east-4",
                 "sim-1",
                 "us-east-3",
                 "uk-central-3",
@@ -2509,6 +2513,7 @@
                 "jp-east-2",
                 "us-west-1",
                 "us-east-4",
+                "ca-east-4",
                 "sim-1",
                 "us-east-3",
                 "uk-central-3",
@@ -2677,6 +2682,7 @@
                                   "jp-east-2",
                                   "us-west-1",
                                   "us-east-4",
+                                  "ca-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -2847,6 +2853,7 @@
                                   "jp-east-2",
                                   "us-west-1",
                                   "us-east-4",
+                                  "ca-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -7167,6 +7174,7 @@
                                   "jp-east-2",
                                   "us-west-1",
                                   "us-east-4",
+                                  "ca-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -7337,6 +7345,7 @@
                                   "jp-east-2",
                                   "us-west-1",
                                   "us-east-4",
+                                  "ca-east-4",
                                   "sim-1",
                                   "us-east-3"
                                 ]
@@ -8164,6 +8173,7 @@
                           "jp-east-2",
                           "us-west-1",
                           "us-east-4",
+                          "ca-east-4",
                           "sim-1",
                           "us-east-3"
                         ]
@@ -8974,6 +8984,7 @@
                       "jp-east-2",
                       "us-west-1",
                       "us-east-4",
+                      "ca-east-4",
                       "sim-1",
                       "us-east-3"
                     ]
@@ -9727,6 +9738,7 @@
               "jp-east-2",
               "us-west-1",
               "us-east-4",
+              "ca-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -10429,6 +10441,7 @@
               "jp-east-2",
               "us-west-1",
               "us-east-4",
+              "ca-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
@@ -10996,6 +11009,7 @@
                   "jp-east-2",
                   "us-west-1",
                   "us-east-4",
+                  "ca-east-4",
                   "sim-1",
                   "us-east-3"
                 ]
@@ -11098,6 +11112,7 @@
                   "jp-east-2",
                   "us-west-1",
                   "us-east-4",
+                  "ca-east-4",
                   "sim-1",
                   "us-east-3"
                 ]
@@ -11399,6 +11414,7 @@
               "jp-east-2",
               "us-west-1",
               "us-east-4",
+              "ca-east-4",
               "sim-1",
               "us-east-3",
               "uk-central-3",
