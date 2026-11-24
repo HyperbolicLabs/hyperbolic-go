@@ -26,8 +26,10 @@ import (
 
 // StorageVolume A network storage volume.
 type StorageVolume struct {
-	AttachedRentalIds []string                     `json:"attachedRentalIds"`
-	CostPerHourCents  float64                      `json:"costPerHourCents"`
+	AttachedRentalIds []string `json:"attachedRentalIds"`
+	CostPerHourCents  float64  `json:"costPerHourCents"`
+
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
 	CreatedAt         time.Time                    `json:"createdAt"`
 	Label             string                       `json:"label"`
 	OrgID             nullable.Nullable[string]    `json:"orgId"`
@@ -74,6 +76,7 @@ type SuccessResponse struct {
 
 // User A Hyperbolic user account.
 type User struct {
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
 	CreatedAt     time.Time                    `json:"createdAt"`
 	Email         string                       `json:"email"`
 	EmailVerified nullable.Nullable[bool]      `json:"emailVerified"`

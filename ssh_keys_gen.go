@@ -132,6 +132,7 @@ type DeletedSSHKey struct {
 
 // SSHKey An SSH public key saved to a user's account or an organization. userId is the member who added it; orgId is set when the key belongs to an organization.
 type SSHKey struct {
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
 	CreatedAt time.Time `json:"createdAt"`
 
 	// CreatedBy The user who added an SSH public key.
@@ -151,6 +152,7 @@ type SSHKeyCreator struct {
 
 // SSHKeyWithLiveRentalCount An SSH public key, with the number of live rentals it is attached to.
 type SSHKeyWithLiveRentalCount struct {
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
 	CreatedAt time.Time `json:"createdAt"`
 
 	// CreatedBy The user who added an SSH public key.

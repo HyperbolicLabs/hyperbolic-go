@@ -78,7 +78,9 @@ func (s *UsersService) VerifyPhoneNumber(ctx context.Context, params VerifyPhone
 
 // CurrentUser The authenticated user, with account state resolved.
 type CurrentUser struct {
-	CompletedPromos     []string                     `json:"completedPromos"`
+	CompletedPromos []string `json:"completedPromos"`
+
+	// CreatedAt Example: 2025-01-31T12:00:00.000Z
 	CreatedAt           time.Time                    `json:"createdAt"`
 	Email               string                       `json:"email"`
 	EmailVerified       nullable.Nullable[bool]      `json:"emailVerified"`
