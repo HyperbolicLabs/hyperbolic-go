@@ -631,7 +631,8 @@
                     "type": "string",
                     "enum": [
                       "on-demand",
-                      "reserved"
+                      "reserved",
+                      "spot"
                     ]
                   },
                   "termPeriodDays": {
@@ -921,7 +922,8 @@
                     "type": "string",
                     "enum": [
                       "on-demand",
-                      "reserved"
+                      "reserved",
+                      "spot"
                     ]
                   },
                   "termPeriodDays": {
@@ -1641,7 +1643,8 @@
                     "type": "string",
                     "enum": [
                       "on-demand",
-                      "reserved"
+                      "reserved",
+                      "spot"
                     ]
                   },
                   "termPeriodDays": {
@@ -2331,7 +2334,8 @@
               "enum": [
                 "on-demand",
                 "reserved",
-                "private-cloud"
+                "private-cloud",
+                "spot"
               ]
             }
           },
@@ -2534,7 +2538,8 @@
               "enum": [
                 "on-demand",
                 "reserved",
-                "private-cloud"
+                "private-cloud",
+                "spot"
               ]
             }
           },
@@ -2760,6 +2765,10 @@
                             "description": "Whether this option can only be rented on the spot term.",
                             "type": "boolean"
                           },
+                          "spotCostPerHourCents": {
+                            "description": "The hourly price of this option on the spot term, where a spot price is set for it.",
+                            "type": "number"
+                          },
                           "machineType": {
                             "type": "string",
                             "const": "virtual-machine"
@@ -2794,6 +2803,10 @@
                               ],
                               "additionalProperties": false
                             }
+                          },
+                          "supportsSpot": {
+                            "type": "boolean",
+                            "description": "Whether this option can be rented on the spot (interruptible) term."
                           }
                         },
                         "required": [
@@ -2808,7 +2821,8 @@
                           "gpuFormFactor",
                           "connectionType",
                           "machineType",
-                          "nodes"
+                          "nodes",
+                          "supportsSpot"
                         ],
                         "additionalProperties": false
                       },
@@ -2931,6 +2945,10 @@
                             "description": "Whether this option can only be rented on the spot term.",
                             "type": "boolean"
                           },
+                          "spotCostPerHourCents": {
+                            "description": "The hourly price of this option on the spot term, where a spot price is set for it.",
+                            "type": "number"
+                          },
                           "machineType": {
                             "type": "string",
                             "const": "bare-metal"
@@ -2965,6 +2983,10 @@
                               ],
                               "additionalProperties": false
                             }
+                          },
+                          "supportsSpot": {
+                            "type": "boolean",
+                            "description": "Whether this option can be rented on the spot (interruptible) term."
                           }
                         },
                         "required": [
@@ -2979,7 +3001,8 @@
                           "gpuFormFactor",
                           "connectionType",
                           "machineType",
-                          "nodes"
+                          "nodes",
+                          "supportsSpot"
                         ],
                         "additionalProperties": false
                       }
@@ -6575,7 +6598,8 @@
                     "type": "string",
                     "enum": [
                       "on-demand",
-                      "reserved"
+                      "reserved",
+                      "spot"
                     ]
                   },
                   "termPeriodDays": {
@@ -7252,6 +7276,10 @@
                             "description": "Whether this option can only be rented on the spot term.",
                             "type": "boolean"
                           },
+                          "spotCostPerHourCents": {
+                            "description": "The hourly price of this option on the spot term, where a spot price is set for it.",
+                            "type": "number"
+                          },
                           "machineType": {
                             "type": "string",
                             "const": "virtual-machine"
@@ -7286,6 +7314,10 @@
                               ],
                               "additionalProperties": false
                             }
+                          },
+                          "supportsSpot": {
+                            "type": "boolean",
+                            "description": "Whether this option can be rented on the spot (interruptible) term."
                           }
                         },
                         "required": [
@@ -7300,7 +7332,8 @@
                           "gpuFormFactor",
                           "connectionType",
                           "machineType",
-                          "nodes"
+                          "nodes",
+                          "supportsSpot"
                         ],
                         "additionalProperties": false
                       },
@@ -7423,6 +7456,10 @@
                             "description": "Whether this option can only be rented on the spot term.",
                             "type": "boolean"
                           },
+                          "spotCostPerHourCents": {
+                            "description": "The hourly price of this option on the spot term, where a spot price is set for it.",
+                            "type": "number"
+                          },
                           "machineType": {
                             "type": "string",
                             "const": "bare-metal"
@@ -7457,6 +7494,10 @@
                               ],
                               "additionalProperties": false
                             }
+                          },
+                          "supportsSpot": {
+                            "type": "boolean",
+                            "description": "Whether this option can be rented on the spot (interruptible) term."
                           }
                         },
                         "required": [
@@ -7471,7 +7512,8 @@
                           "gpuFormFactor",
                           "connectionType",
                           "machineType",
-                          "nodes"
+                          "nodes",
+                          "supportsSpot"
                         ],
                         "additionalProperties": false
                       }
@@ -9008,7 +9050,8 @@
                     "type": "string",
                     "enum": [
                       "on-demand",
-                      "reserved"
+                      "reserved",
+                      "spot"
                     ]
                   },
                   "termPeriodDays": {
@@ -10008,6 +10051,49 @@
                   "originalCostPerHour"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "effectiveAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-01-31T12:00:00.000Z"
+                  },
+                  "termType": {
+                    "type": "string",
+                    "const": "spot"
+                  },
+                  "costPerHour": {
+                    "type": "number"
+                  },
+                  "reservedUntil": {
+                    "type": "null"
+                  },
+                  "reservationEndsAt": {
+                    "type": "null"
+                  },
+                  "termPeriodDays": {
+                    "type": "null"
+                  },
+                  "discountPercentage": {
+                    "type": "null"
+                  },
+                  "originalCostPerHour": {
+                    "type": "null"
+                  }
+                },
+                "required": [
+                  "effectiveAt",
+                  "termType",
+                  "costPerHour",
+                  "reservedUntil",
+                  "reservationEndsAt",
+                  "termPeriodDays",
+                  "discountPercentage",
+                  "originalCostPerHour"
+                ],
+                "additionalProperties": false
               }
             ],
             "type": "object"
@@ -10711,6 +10797,49 @@
                   "originalCostPerHour"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "effectiveAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-01-31T12:00:00.000Z"
+                  },
+                  "termType": {
+                    "type": "string",
+                    "const": "spot"
+                  },
+                  "costPerHour": {
+                    "type": "number"
+                  },
+                  "reservedUntil": {
+                    "type": "null"
+                  },
+                  "reservationEndsAt": {
+                    "type": "null"
+                  },
+                  "termPeriodDays": {
+                    "type": "null"
+                  },
+                  "discountPercentage": {
+                    "type": "null"
+                  },
+                  "originalCostPerHour": {
+                    "type": "null"
+                  }
+                },
+                "required": [
+                  "effectiveAt",
+                  "termType",
+                  "costPerHour",
+                  "reservedUntil",
+                  "reservationEndsAt",
+                  "termPeriodDays",
+                  "discountPercentage",
+                  "originalCostPerHour"
+                ],
+                "additionalProperties": false
               }
             ],
             "type": "object"
@@ -11292,12 +11421,16 @@
           },
           "private-cloud": {
             "$ref": "#/components/schemas/RentalTermTypeSummary"
+          },
+          "spot": {
+            "$ref": "#/components/schemas/RentalTermTypeSummary"
           }
         },
         "required": [
           "on-demand",
           "reserved",
-          "private-cloud"
+          "private-cloud",
+          "spot"
         ],
         "additionalProperties": false,
         "description": "Active rental totals for each term type."
@@ -11653,6 +11786,49 @@
                   "termType": {
                     "type": "string",
                     "const": "private-cloud"
+                  },
+                  "costPerHour": {
+                    "type": "number"
+                  },
+                  "reservedUntil": {
+                    "type": "null"
+                  },
+                  "reservationEndsAt": {
+                    "type": "null"
+                  },
+                  "termPeriodDays": {
+                    "type": "null"
+                  },
+                  "discountPercentage": {
+                    "type": "null"
+                  },
+                  "originalCostPerHour": {
+                    "type": "null"
+                  }
+                },
+                "required": [
+                  "effectiveAt",
+                  "termType",
+                  "costPerHour",
+                  "reservedUntil",
+                  "reservationEndsAt",
+                  "termPeriodDays",
+                  "discountPercentage",
+                  "originalCostPerHour"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "effectiveAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-01-31T12:00:00.000Z"
+                  },
+                  "termType": {
+                    "type": "string",
+                    "const": "spot"
                   },
                   "costPerHour": {
                     "type": "number"
